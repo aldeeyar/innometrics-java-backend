@@ -4,8 +4,8 @@ import com.innopolis.innometrics.restapi.DTO.AuthRequest;
 import com.innopolis.innometrics.restapi.DTO.AuthResponse;
 import com.innopolis.innometrics.restapi.config.JwtToken;
 import com.innopolis.innometrics.restapi.service.UserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,25 +18,18 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*", methods = RequestMethod.POST)
+@RequiredArgsConstructor
+@Slf4j
 public class AuthAPI {
-
-    private static Logger LOG = LogManager.getLogger();
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
+    private final AuthenticationManager authenticationManager;
     @Autowired
     private JwtToken jwtToken;
-
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> login(@RequestBody AuthRequest authenticationRequest) throws Exception {
-
-        LOG.info("Request received from: " + authenticationRequest.getEmail());
-
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authenticationRequest) throws Exception {
+        log.info("Request received from: " + authenticationRequest.getEmail());
         authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
         final UserDetails userDetails = userService
                 .loadUserByUsername(authenticationRequest.getEmail());
@@ -54,6 +47,4 @@ public class AuthAPI {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
     }
-
-    //Api logout
 }

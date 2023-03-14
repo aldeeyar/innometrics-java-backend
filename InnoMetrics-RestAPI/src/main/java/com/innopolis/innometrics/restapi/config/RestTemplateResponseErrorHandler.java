@@ -28,12 +28,9 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
 
         if (httpResponse.getStatusCode()
                 .series() == SERVER_ERROR) {
-            // handle SERVER_ERROR
         } else if (httpResponse.getStatusCode()
                 .series() == CLIENT_ERROR) {
-            // handle CLIENT_ERROR
             if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
-                //throw new NotFoundException();
             }
         }
     }
