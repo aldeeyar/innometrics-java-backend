@@ -1,7 +1,7 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.TeamListRequest;
-import com.innopolis.innometrics.restapi.DTO.TeamRequest;
+import com.innopolis.innometrics.restapi.dto.TeamListRequest;
+import com.innopolis.innometrics.restapi.dto.TeamRequest;
 import com.innopolis.innometrics.restapi.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ public class TeamAPI {
     @PostMapping()
     public ResponseEntity<TeamRequest> createTeam(@RequestBody TeamRequest teamRequest,
                                                   @RequestHeader(required = false) String token) {
-        teamRequest.setTeamid(null);
+        teamRequest.setTeamId(null);
         return new ResponseEntity<>(teamService.createTeam(teamRequest, token),
                 HttpStatus.OK);
     }
@@ -29,7 +29,7 @@ public class TeamAPI {
     public ResponseEntity<TeamRequest> updateTeam(@PathVariable Integer id,
                                                   @RequestBody TeamRequest teamRequest,
                                                   @RequestHeader(required = false) String token) {
-        teamRequest.setTeamid(id);
+        teamRequest.setTeamId(id);
         return new ResponseEntity<>(teamService.updateTeam(teamRequest, token),
                 HttpStatus.OK);
     }

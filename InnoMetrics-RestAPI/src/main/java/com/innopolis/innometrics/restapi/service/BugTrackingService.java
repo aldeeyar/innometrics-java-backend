@@ -1,25 +1,17 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.BugReportRequest;
-import com.innopolis.innometrics.restapi.DTO.BugTrackingListRequest;
-import com.innopolis.innometrics.restapi.DTO.BugTrackingRequest;
+import com.innopolis.innometrics.restapi.dto.BugReportRequest;
+import com.innopolis.innometrics.restapi.dto.BugTrackingListRequest;
+import com.innopolis.innometrics.restapi.dto.BugTrackingRequest;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 

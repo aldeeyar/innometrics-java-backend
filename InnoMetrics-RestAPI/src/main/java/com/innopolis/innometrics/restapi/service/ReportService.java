@@ -1,9 +1,9 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.ActivitiesReportByUserResponse;
-import com.innopolis.innometrics.restapi.DTO.CumulativeReportResponse;
-import com.innopolis.innometrics.restapi.DTO.CurrentActivityReport;
-import com.innopolis.innometrics.restapi.DTO.TimeReportResponse;
+import com.innopolis.innometrics.restapi.dto.ActivitiesReportByUserResponse;
+import com.innopolis.innometrics.restapi.dto.CumulativeReportResponse;
+import com.innopolis.innometrics.restapi.dto.CurrentActivityReport;
+import com.innopolis.innometrics.restapi.dto.TimeReportResponse;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;

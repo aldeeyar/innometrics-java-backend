@@ -1,7 +1,7 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.CompanyListRequest;
-import com.innopolis.innometrics.restapi.DTO.CompanyRequest;
+import com.innopolis.innometrics.restapi.dto.CompanyListRequest;
+import com.innopolis.innometrics.restapi.dto.CompanyRequest;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
@@ -11,8 +11,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.List;
 
 @Component
 public class CompanyService {
@@ -29,7 +27,7 @@ public class CompanyService {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public CompanyRequest updateCompany(CompanyRequest companyRequest, String token) {
-        String uri = baseURL + "/" + companyRequest.getCompanyid();
+        String uri = baseURL + "/" + companyRequest.getCompanyId();
         return uploadCompany(companyRequest, token, uri, HttpMethod.PUT);
     }
 

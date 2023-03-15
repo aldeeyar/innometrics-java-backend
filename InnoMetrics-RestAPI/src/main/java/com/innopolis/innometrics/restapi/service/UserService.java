@@ -1,6 +1,6 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.*;
+import com.innopolis.innometrics.restapi.dto.*;
 import com.innopolis.innometrics.restapi.entity.User;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
@@ -176,13 +176,13 @@ public class UserService implements UserDetailsService {
 
         myUserRq.setBirthday(myUser.getBirthday());
         myUserRq.setGender(myUser.getGender());
-        myUserRq.setFacebook_alias(myUser.getFacebook_alias());
-        myUserRq.setTelegram_alias(myUser.getTelegram_alias());
-        myUserRq.setTwitter_alias(myUser.getTwitter_alias());
-        myUserRq.setLinkedin_alias(myUser.getLinkedin_alias());
+        myUserRq.setFacebookAlias(myUser.getFacebook_alias());
+        myUserRq.setTelegramAlias(myUser.getTelegram_alias());
+        myUserRq.setTwitterAlias(myUser.getTwitter_alias());
+        myUserRq.setLinkedinAlias(myUser.getLinkedin_alias());
 
-        myUserRq.setIsactive(myUser.getIsactive());
-        myUserRq.setConfirmed_at(myUser.getConfirmed_at());
+        myUserRq.setIsActive(myUser.getIsactive());
+        myUserRq.setConfirmedAt(myUser.getConfirmed_at());
         myUserRq.setRole(myUser.getRole().getName());
 
         return myUserRq;
@@ -197,13 +197,13 @@ public class UserService implements UserDetailsService {
 
         myUser.setBirthday(userRequest.getBirthday());
         myUser.setGender(userRequest.getGender());
-        myUser.setFacebook_alias(userRequest.getFacebook_alias());
-        myUser.setTelegram_alias(userRequest.getTelegram_alias());
-        myUser.setTwitter_alias(userRequest.getTwitter_alias());
-        myUser.setLinkedin_alias(userRequest.getLinkedin_alias());
+        myUser.setFacebook_alias(userRequest.getFacebookAlias());
+        myUser.setTelegram_alias(userRequest.getTelegramAlias());
+        myUser.setTwitter_alias(userRequest.getTwitterAlias());
+        myUser.setLinkedin_alias(userRequest.getLinkedinAlias());
 
-        myUser.setIsactive(userRequest.getIsactive());
-        myUser.setConfirmed_at(userRequest.getConfirmed_at());
+        myUser.setIsactive(userRequest.getIsActive());
+        myUser.setConfirmed_at(userRequest.getConfirmedAt());
 
         RoleResponse roleResponse = roleService.getRole(userRequest.getRole());
         myUser.setRole(roleService.RoleFromRoleResponse(roleResponse));

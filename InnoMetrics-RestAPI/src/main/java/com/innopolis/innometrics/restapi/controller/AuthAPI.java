@@ -1,7 +1,7 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.AuthRequest;
-import com.innopolis.innometrics.restapi.DTO.AuthResponse;
+import com.innopolis.innometrics.restapi.dto.AuthRequest;
+import com.innopolis.innometrics.restapi.dto.AuthResponse;
 import com.innopolis.innometrics.restapi.config.JwtToken;
 import com.innopolis.innometrics.restapi.service.UserService;
 import lombok.RequiredArgsConstructor;

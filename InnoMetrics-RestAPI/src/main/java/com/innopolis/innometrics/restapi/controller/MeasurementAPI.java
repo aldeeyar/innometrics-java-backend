@@ -1,7 +1,7 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.MeasurementTypeRequest;
-import com.innopolis.innometrics.restapi.DTO.MeasurementTypeResponse;
+import com.innopolis.innometrics.restapi.dto.MeasurementTypeRequest;
+import com.innopolis.innometrics.restapi.dto.MeasurementTypeResponse;
 import com.innopolis.innometrics.restapi.config.JwtToken;
 import com.innopolis.innometrics.restapi.constants.ErrorMessages;
 import com.innopolis.innometrics.restapi.entity.MeasurementType;

@@ -1,7 +1,7 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.TeamListRequest;
-import com.innopolis.innometrics.restapi.DTO.TeamRequest;
+import com.innopolis.innometrics.restapi.dto.TeamListRequest;
+import com.innopolis.innometrics.restapi.dto.TeamRequest;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +25,7 @@ public class TeamService {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public TeamRequest updateTeam(TeamRequest teamRequest, String token) {
-        String uri = baseURL + "/" + teamRequest.getTeamid();
+        String uri = baseURL + "/" + teamRequest.getTeamId();
         return uploadTeam(teamRequest, token, uri, HttpMethod.PUT);
     }
 

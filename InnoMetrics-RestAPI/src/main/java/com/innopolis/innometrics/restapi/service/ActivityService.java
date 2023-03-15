@@ -1,13 +1,8 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.*;
+import com.innopolis.innometrics.restapi.dto.*;
 import com.innopolis.innometrics.restapi.config.JwtToken;
-import com.innopolis.innometrics.restapi.entity.Activity;
-import com.innopolis.innometrics.restapi.entity.Measurement;
-import com.innopolis.innometrics.restapi.exceptions.ValidationException;
 import com.innopolis.innometrics.restapi.repository.ActivityRepository;
-import com.innopolis.innometrics.restapi.repository.MeasurementRepository;
-import com.innopolis.innometrics.restapi.repository.MeasurementTypeRepository;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class ActivityService {

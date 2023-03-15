@@ -1,6 +1,6 @@
 package com.innopolis.innometrics.restapi;
 
-import com.innopolis.innometrics.restapi.DTO.*;
+import com.innopolis.innometrics.restapi.dto.*;
 import com.innopolis.innometrics.restapi.controller.AdminAPI;
 import com.innopolis.innometrics.restapi.controller.AuthAPI;
 import com.innopolis.innometrics.restapi.controller.DataCollectorsAPI;
@@ -70,7 +70,7 @@ class RestapiApplicationTests {
         request.setPassword(user.getPassword());
         ResponseEntity<?> response = authAPI.login(request);
 
-        token = ((AuthResponse) response.getBody()).getToken();
+        token = ((AuthResponse) response.getBody()).getJwtToken();
 
         LOG.info(token);
 
@@ -101,22 +101,22 @@ class RestapiApplicationTests {
         ResponseEntity<?> response = authAPI.login(request);
 
         try {
-            token = ((AuthResponse) response.getBody()).getToken();
+            token = ((AuthResponse) response.getBody()).getJwtToken();
 
             Report report = new Report();
             //List<ActivityReport> lActTemp = new ArrayList<>();
             ActivityReport actTemp = new ActivityReport();
             //actTemp.setActivityID
             actTemp.setActivityType("OS");
-            actTemp.setBrowser_title("");
-            actTemp.setBrowser_url("");
+            actTemp.setBrowserTitle("");
+            actTemp.setBrowserUrl("");
             actTemp.setUserID("x.vasquez");
-            actTemp.setEnd_time(new Date("2019-11-14T17:27:43.264Z"));
-            actTemp.setExecutable_name("test.exe");
-            actTemp.setIdle_activity(true);
-            actTemp.setIp_address("127.0,0,1");
-            actTemp.setMac_address("d8:7d:c0:28:27:21");
-            actTemp.setStart_time(new Date("2019-11-14T17:27:43.264Z"));
+            actTemp.setEndTime(new Date("2019-11-14T17:27:43.264Z"));
+            actTemp.setExecutableName("test.exe");
+            actTemp.setIdleActivity(true);
+            actTemp.setIpAddress("127.0,0,1");
+            actTemp.setMacAddress("d8:7d:c0:28:27:21");
+            actTemp.setStartTime(new Date("2019-11-14T17:27:43.264Z"));
 
             MeasurementReport measurementReport = new MeasurementReport();
             measurementReport.setMeasurementTypeId("1");

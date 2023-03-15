@@ -1,6 +1,6 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.*;
+import com.innopolis.innometrics.restapi.dto.*;
 import com.innopolis.innometrics.restapi.config.JwtToken;
 import com.innopolis.innometrics.restapi.service.ActivityService;
 import com.innopolis.innometrics.restapi.service.CategoryService;
@@ -78,8 +78,8 @@ public class DataCollectorsAPI {
                                                  UriComponentsBuilder ucBuilder,
                                                  @RequestHeader String token) {
         String username = jwtTokenUtil.getUsernameFromToken(token);
-        log.info("A request received from " + username + ", with " + report.getProcessesReport().size() + " process");
-        if (report.getProcessesReport().size() > 1000 || report.getProcessesReport().isEmpty()) {
+        log.info("A request received from " + username + ", with " + report.getProcessReports().size() + " process");
+        if (report.getProcessReports().size() > 1000 || report.getProcessReports().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.PAYLOAD_TOO_LARGE);
         }
         boolean result = processService.CreateProcessReport(report, token);

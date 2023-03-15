@@ -1,6 +1,6 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.*;
+import com.innopolis.innometrics.restapi.dto.*;
 import com.innopolis.innometrics.restapi.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

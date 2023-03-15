@@ -1,20 +1,14 @@
 package com.innopolis.innometrics.restapi.service;
 
 
-import com.innopolis.innometrics.restapi.DTO.AddProcessReportRequest;
-import com.innopolis.innometrics.restapi.DTO.ProfileRequest;
-import com.innopolis.innometrics.restapi.DTO.UserListResponse;
+import com.innopolis.innometrics.restapi.dto.ProfileRequest;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 

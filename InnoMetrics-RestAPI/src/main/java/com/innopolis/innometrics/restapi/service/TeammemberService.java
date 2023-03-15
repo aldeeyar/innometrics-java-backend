@@ -1,8 +1,8 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.TeammembersListRequest;
-import com.innopolis.innometrics.restapi.DTO.TeammembersRequest;
-import com.innopolis.innometrics.restapi.DTO.WorkingTreeListRequest;
+import com.innopolis.innometrics.restapi.dto.TeammembersListRequest;
+import com.innopolis.innometrics.restapi.dto.TeammembersRequest;
+import com.innopolis.innometrics.restapi.dto.WorkingTreeListRequest;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
@@ -10,9 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -30,7 +27,7 @@ public class TeammemberService {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public TeammembersRequest updateTeammember(TeammembersRequest teammembersRequest, String token) {
-        String uri = baseURL + "/" + teammembersRequest.getMemberid();
+        String uri = baseURL + "/" + teammembersRequest.getMemberId();
         return uploadTeammember(teammembersRequest, token, uri, HttpMethod.PUT);
     }
 

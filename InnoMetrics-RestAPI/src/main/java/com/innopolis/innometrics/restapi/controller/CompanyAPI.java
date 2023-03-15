@@ -1,7 +1,7 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.CompanyListRequest;
-import com.innopolis.innometrics.restapi.DTO.CompanyRequest;
+import com.innopolis.innometrics.restapi.dto.CompanyListRequest;
+import com.innopolis.innometrics.restapi.dto.CompanyRequest;
 import com.innopolis.innometrics.restapi.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ public class CompanyAPI {
     @PostMapping()
     public ResponseEntity<CompanyRequest> createCompany(@RequestBody CompanyRequest companyRequest,
                                                         @RequestHeader(required = false) String token) {
-        companyRequest.setCompanyid(null);
+        companyRequest.setCompanyId(null);
         return new ResponseEntity<>(companyService.createCompany(companyRequest, token),
                 HttpStatus.OK);
     }
@@ -29,7 +29,7 @@ public class CompanyAPI {
     public ResponseEntity<CompanyRequest> updateCompany(@PathVariable Integer id,
                                                         @RequestBody CompanyRequest companyRequest,
                                                         @RequestHeader(required = false) String token) {
-        companyRequest.setCompanyid(id);
+        companyRequest.setCompanyId(id);
         return new ResponseEntity<>(companyService.updateCompany(companyRequest, token),
                 HttpStatus.OK);
     }

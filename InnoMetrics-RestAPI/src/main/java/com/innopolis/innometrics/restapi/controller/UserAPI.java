@@ -1,8 +1,8 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.PermissionResponse;
-import com.innopolis.innometrics.restapi.DTO.UserRequest;
-import com.innopolis.innometrics.restapi.DTO.UserResponse;
+import com.innopolis.innometrics.restapi.dto.PermissionResponse;
+import com.innopolis.innometrics.restapi.dto.UserRequest;
+import com.innopolis.innometrics.restapi.dto.UserResponse;
 import com.innopolis.innometrics.restapi.config.JwtToken;
 import com.innopolis.innometrics.restapi.constants.ErrorMessages;
 import com.innopolis.innometrics.restapi.entity.User;
@@ -109,14 +109,14 @@ public class UserAPI {
                 myUser.setSurname(user.getSurname());
                 myUser.setBirthday(user.getBirthday());
                 myUser.setGender(user.getGender());
-                myUser.setFacebook_alias(user.getFacebook_alias());
-                myUser.setTelegram_alias(user.getTelegram_alias());
-                myUser.setTwitter_alias(user.getTwitter_alias());
-                myUser.setLinkedin_alias(user.getLinkedin_alias());
+                myUser.setFacebook_alias(user.getFacebookAlias());
+                myUser.setTelegram_alias(user.getTelegramAlias());
+                myUser.setTwitter_alias(user.getTwitterAlias());
+                myUser.setLinkedin_alias(user.getLinkedinAlias());
                 myUser.setUpdateby(userName);
                 myUser.setLastupdate(new Date());
-                myUser.setIsactive(user.getIsactive());
-                myUser.setConfirmed_at(user.getConfirmed_at());
+                myUser.setIsactive(user.getIsActive());
+                myUser.setConfirmed_at(user.getConfirmedAt());
                 Boolean response = userService.update(myUser) != null;
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }

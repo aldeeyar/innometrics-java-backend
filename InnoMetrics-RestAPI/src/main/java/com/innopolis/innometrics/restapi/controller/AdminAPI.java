@@ -1,8 +1,8 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.ProjectListRequest;
-import com.innopolis.innometrics.restapi.DTO.ProjectRequest;
-import com.innopolis.innometrics.restapi.DTO.UserListResponse;
+import com.innopolis.innometrics.restapi.dto.ProjectListRequest;
+import com.innopolis.innometrics.restapi.dto.ProjectRequest;
+import com.innopolis.innometrics.restapi.dto.UserListResponse;
 import com.innopolis.innometrics.restapi.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

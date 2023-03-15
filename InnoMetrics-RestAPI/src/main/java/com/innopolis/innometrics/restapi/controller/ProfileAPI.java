@@ -1,6 +1,6 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.ProfileRequest;
+import com.innopolis.innometrics.restapi.dto.ProfileRequest;
 import com.innopolis.innometrics.restapi.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

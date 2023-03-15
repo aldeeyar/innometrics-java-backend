@@ -1,8 +1,8 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.TeammembersListRequest;
-import com.innopolis.innometrics.restapi.DTO.TeammembersRequest;
-import com.innopolis.innometrics.restapi.DTO.WorkingTreeListRequest;
+import com.innopolis.innometrics.restapi.dto.TeammembersListRequest;
+import com.innopolis.innometrics.restapi.dto.TeammembersRequest;
+import com.innopolis.innometrics.restapi.dto.WorkingTreeListRequest;
 import com.innopolis.innometrics.restapi.service.TeammemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ public class TeamMemberAPI {
     @PostMapping("/Teammember")
     public ResponseEntity<TeammembersRequest> createTeammember(@RequestBody TeammembersRequest teammembersRequest,
                                                                @RequestHeader(required = false) String token) {
-        teammembersRequest.setMemberid(null);
+        teammembersRequest.setMemberId(null);
         return new ResponseEntity<>(teammemberService.createTeammember(teammembersRequest, token),
                 HttpStatus.OK);
     }
@@ -30,7 +30,7 @@ public class TeamMemberAPI {
     public ResponseEntity<TeammembersRequest> updateTeammember(@PathVariable Integer id,
                                                                @RequestBody TeammembersRequest teammembersRequest,
                                                                @RequestHeader(required = false) String token) {
-        teammembersRequest.setMemberid(id);
+        teammembersRequest.setMemberId(id);
         return new ResponseEntity<>(teammemberService.updateTeammember(teammembersRequest, token),
                 HttpStatus.OK);
     }

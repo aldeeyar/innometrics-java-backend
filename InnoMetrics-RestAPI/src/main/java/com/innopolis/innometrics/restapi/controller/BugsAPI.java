@@ -1,8 +1,8 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.BugReportRequest;
-import com.innopolis.innometrics.restapi.DTO.BugTrackingListRequest;
-import com.innopolis.innometrics.restapi.DTO.BugTrackingRequest;
+import com.innopolis.innometrics.restapi.dto.BugReportRequest;
+import com.innopolis.innometrics.restapi.dto.BugTrackingListRequest;
+import com.innopolis.innometrics.restapi.dto.BugTrackingRequest;
 import com.innopolis.innometrics.restapi.constants.ErrorMessages;
 import com.innopolis.innometrics.restapi.exceptions.ValidationException;
 import com.innopolis.innometrics.restapi.service.BugTrackingService;

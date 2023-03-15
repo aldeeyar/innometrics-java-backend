@@ -1,6 +1,6 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.*;
+import com.innopolis.innometrics.restapi.dto.*;
 import com.innopolis.innometrics.restapi.entity.Page;
 import com.innopolis.innometrics.restapi.entity.Permission;
 import com.innopolis.innometrics.restapi.entity.Role;
@@ -192,12 +192,12 @@ public class RoleService {
         RoleResponse roleResponse = new RoleResponse();
 
         roleResponse.setName(role.getName());
-        roleResponse.setCreatedby(role.getCreatedby());
-        roleResponse.setCreationdate(role.getCreationdate());
+        roleResponse.setCreatedBy(role.getCreatedby());
+        roleResponse.setCreationDate(role.getCreationdate());
         roleResponse.setDescription(role.getDescription());
-        roleResponse.setIsactive(role.getIsactive());
-        roleResponse.setLastupdate(role.getLastupdate());
-        roleResponse.setUpdateby(role.getUpdateby());
+        roleResponse.setIsActive(role.getIsactive());
+        roleResponse.setLastUpdate(role.getLastupdate());
+        roleResponse.setUpdateBy(role.getUpdateby());
         PageListResponse pages = new PageListResponse();
 
         for (Permission permission : role.getPermissions()) {
@@ -214,12 +214,12 @@ public class RoleService {
         Role role = new Role();
 
         role.setName(roleRequest.getName());
-        role.setCreatedby(roleRequest.getCreatedby());
-        role.setCreationdate(roleRequest.getCreationdate());
+        role.setCreatedby(roleRequest.getCreatedBy());
+        role.setCreationdate(roleRequest.getCreationDate());
         role.setDescription(roleRequest.getDescription());
-        role.setIsactive(roleRequest.getIsactive());
-        role.setLastupdate(roleRequest.getLastupdate());
-        role.setUpdateby(roleRequest.getUpdateby());
+        role.setIsactive(roleRequest.getIsActive());
+        role.setLastupdate(roleRequest.getLastupDate());
+        role.setUpdateby(roleRequest.getUpdateBy());
 
         List<PageRequest> pages = roleRequest.getPages();
         Set<Permission> permissions = new HashSet<Permission>();
@@ -239,12 +239,12 @@ public class RoleService {
         Role role = new Role();
 
         role.setName(roleResponse.getName());
-        role.setCreatedby(roleResponse.getCreatedby());
-        role.setCreationdate(roleResponse.getCreationdate());
+        role.setCreatedby(roleResponse.getCreatedBy());
+        role.setCreationdate(roleResponse.getCreationDate());
         role.setDescription(roleResponse.getDescription());
-        role.setIsactive(roleResponse.getIsactive());
-        role.setLastupdate(roleResponse.getLastupdate());
-        role.setUpdateby(roleResponse.getUpdateby());
+        role.setIsactive(roleResponse.getIsActive());
+        role.setLastupdate(roleResponse.getLastUpdate());
+        role.setUpdateby(roleResponse.getUpdateBy());
 
         PageListResponse pageListResponse = roleResponse.getPages();
         Set<Permission> permissions = new HashSet<Permission>();

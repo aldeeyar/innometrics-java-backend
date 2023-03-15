@@ -1,9 +1,9 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.PermissionResponse;
-import com.innopolis.innometrics.restapi.DTO.RoleListResponse;
-import com.innopolis.innometrics.restapi.DTO.RoleRequest;
-import com.innopolis.innometrics.restapi.DTO.RoleResponse;
+import com.innopolis.innometrics.restapi.dto.PermissionResponse;
+import com.innopolis.innometrics.restapi.dto.RoleListResponse;
+import com.innopolis.innometrics.restapi.dto.RoleRequest;
+import com.innopolis.innometrics.restapi.dto.RoleResponse;
 import com.innopolis.innometrics.restapi.entity.Page;
 import com.innopolis.innometrics.restapi.exceptions.ValidationException;
 import com.innopolis.innometrics.restapi.service.PermissionService;
