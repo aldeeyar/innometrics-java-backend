@@ -71,7 +71,7 @@ public class RoleAPI {
         if (roleService.getRole(permissionResponse.getRole()) == null) {
             throw new ValidationException(ROLE_NOT_FOUND.getMessage());
         }
-        PermissionResponse permissionResponseOut = permissionService.createPermissios(permissionResponse);
+        PermissionResponse permissionResponseOut = permissionService.createPermission(permissionResponse);
         return new ResponseEntity<>(permissionResponseOut, HttpStatus.CREATED);
     }
 
@@ -101,7 +101,7 @@ public class RoleAPI {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    private void handeException(MethodArgumentNotValidException e) {
+    private void handeException() {
         throw new ValidationException(NOT_ENOUGH_DATA.getMessage());
     }
 }

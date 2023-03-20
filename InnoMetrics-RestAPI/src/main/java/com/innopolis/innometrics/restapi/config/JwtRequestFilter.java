@@ -1,6 +1,6 @@
 package com.innopolis.innometrics.restapi.config;
 
-import com.innopolis.innometrics.restapi.constants.HeaderConstants;
+import com.innopolis.innometrics.restapi.constants.RequestConstants;
 import com.innopolis.innometrics.restapi.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +32,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-
-        final String requestTokenHeader = request.getHeader(HeaderConstants.TOKEN.getValue());
-
+        final String requestTokenHeader = request.getHeader(RequestConstants.TOKEN.getValue());
         String username = null;
         String jwtToken = null;
         if (requestTokenHeader != null) {
             jwtToken = requestTokenHeader;
-
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
@@ -50,16 +47,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         } else {
             logger.warn("JWT Token does not begin with Bearer String");
         }
-
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-
             if (Boolean.TRUE.equals(jwtTokenUtil.validateToken(jwtToken, userDetails))) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
 
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }

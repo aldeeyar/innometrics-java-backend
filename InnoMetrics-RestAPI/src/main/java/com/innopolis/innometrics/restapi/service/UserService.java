@@ -1,12 +1,17 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.dto.*;
+import com.innopolis.innometrics.restapi.config.JwtToken;
+import com.innopolis.innometrics.restapi.constants.RequestConstants;
+import com.innopolis.innometrics.restapi.dto.RoleResponse;
+import com.innopolis.innometrics.restapi.dto.TeamListRequest;
+import com.innopolis.innometrics.restapi.dto.UserRequest;
+import com.innopolis.innometrics.restapi.dto.UserResponse;
 import com.innopolis.innometrics.restapi.entity.User;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,25 +24,18 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
-
-    private static Logger LOG = LogManager.getLogger();
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
-    private RoleService roleService;
-
-    private String baseURL = "http://INNOMETRICS-AUTH-SERVER/AuthAPI/User";
+    private static final Logger LOG = LogManager.getLogger();
+    private static final String BASE_URL = "http://INNOMETRICS-AUTH-SERVER/AuthAPI/User";
+    private final RestTemplate restTemplate;
+    private final RoleService roleService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = findByEmail(email);
-
         if (user == null)
             throw new UsernameNotFoundException("User not found with email: " + email);
-
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
                 new ArrayList<>());
     }
@@ -51,83 +49,53 @@ public class UserService implements UserDetailsService {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public User findByEmail(String email) {
-        UserRequest user = new UserRequest();
-        String uri = baseURL + "/" + email;
-
-        ResponseEntity<UserRequest> response = null;
-
-        HttpEntity<UserRequest> entity = new HttpEntity<>(null);
-        response = restTemplate.exchange(uri, HttpMethod.GET, entity, UserRequest.class);
-
+        UserRequest user;
+        String uri = BASE_URL + "/" + email;
+        ResponseEntity<UserRequest> response;
+        response = restTemplate.exchange(uri, HttpMethod.GET, null, UserRequest.class);
         HttpStatus status = response.getStatusCode();
         user = response.getBody();
-
         if (status == HttpStatus.NO_CONTENT) return null;
-
-        User myUser = fromUserRequestToUser(user);
-
-        return myUser;
+        return fromUserRequestToUser(user);
     }
 
 
-    public User findByEmailFallback(String email) {
-
-        User myUser = new User();
-        myUser.setName("Default");
-        myUser.setSurname("User");
-        myUser.setEmail(email);
-        myUser.setPassword("");
-        myUser.setIsactive("N");
-        myUser.setConfirmed_at(new Date());
-
-        RoleResponse roleResponse = roleService.getRole("DEVELOPER");
-        myUser.setRole(roleService.RoleFromRoleResponse(roleResponse));
-
-        return myUser;
-    }
-
-    @HystrixCommand( commandKey = "update", fallbackMethod = "updateFallback", commandProperties = {
+    @HystrixCommand(commandKey = "update", fallbackMethod = "updateFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public Boolean update(User myUser) {
-
-        String uri = baseURL;// + "/User";
-
         UserRequest myUserRq = fromUserToUserRequest(myUser);
-
         HttpEntity<UserRequest> entity = new HttpEntity<>(myUserRq);
-        ResponseEntity<UserRequest> response = restTemplate.exchange(uri, HttpMethod.PUT, entity, UserRequest.class);
-
+        ResponseEntity<UserRequest> response = restTemplate.exchange(BASE_URL, HttpMethod.PUT, entity, UserRequest.class);
         HttpStatus status = response.getStatusCode();
-        UserRequest restCall = response.getBody();
-
-        if (status == HttpStatus.CREATED) {
-            return true;
-        }
-
-        return false;
-
+        return status == HttpStatus.CREATED;
     }
 
-    public Boolean updateFallback(User myUser) {
-        return false;
+    public User mapUser(User myUser, UserRequest user, String token, JwtToken jwtTokenUtil) {
+        String userName = token != null ? jwtTokenUtil.getUsernameFromToken(token) : "API";
+        myUser.setEmail(user.getEmail());
+        myUser.setName(user.getName());
+        myUser.setSurname(user.getSurname());
+        myUser.setBirthday(user.getBirthday());
+        myUser.setGender(user.getGender());
+        myUser.setFacebookAlias(user.getFacebookAlias());
+        myUser.setTelegramAlias(user.getTelegramAlias());
+        myUser.setTwitterAlias(user.getTwitterAlias());
+        myUser.setLinkedinAlias(user.getLinkedinAlias());
+        myUser.setUpdateBy(userName);
+        myUser.setLastUpdate(new Date());
+        myUser.setIsActive(user.getIsActive());
+        return myUser;
     }
 
-    @HystrixCommand( commandKey = "create", fallbackMethod = "createFallback", commandProperties = {
+    @HystrixCommand(commandKey = "create", fallbackMethod = "createFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public boolean create(UserRequest myUserRq) {
-
         try {
-            String uri = baseURL;
-
-
             HttpEntity<UserRequest> entity = new HttpEntity<>(myUserRq);
-            ResponseEntity<UserRequest> response = restTemplate.exchange(uri, HttpMethod.POST, entity, UserRequest.class);
-
+            ResponseEntity<UserRequest> response = restTemplate.exchange(BASE_URL, HttpMethod.POST, entity, UserRequest.class);
             HttpStatus status = response.getStatusCode();
-            UserRequest restCall = response.getBody();
-
             if (status == HttpStatus.CREATED) {
                 return true;
             }
@@ -135,11 +103,6 @@ public class UserService implements UserDetailsService {
         catch (Exception ex){
          LOG.warn(ex.getMessage());
         }
-
-        return false;
-    }
-
-    public boolean createFallback(UserRequest myUser) {
         return false;
     }
 
@@ -148,151 +111,86 @@ public class UserService implements UserDetailsService {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public UserResponse setRole(String userName, String roleName) {
-        String uri = "http://INNOMETRICS-AUTH-SERVER/AdminAPI/User/Role" ;
-
+        String uri = "http://INNOMETRICS-AUTH-SERVER/AdminAPI/User/Role";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("RoleName", roleName).queryParam("UserName", userName);
-
-        ResponseEntity<UserResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, null, UserResponse.class);
-        HttpStatus status = response.getStatusCode();
-
+        ResponseEntity<UserResponse> response = restTemplate
+                .exchange(builder.toUriString(), HttpMethod.POST, null, UserResponse.class);
         return response.getBody();
     }
 
 
-    public UserResponse setRoleFallback(String userName, String roleName, Throwable exception) {
-        LOG.warn("setRoleFallback method used");
-        LOG.warn(exception);
-        return null;
-    }
-
-
-    private UserRequest fromUserToUserRequest(User myUser){
+    private UserRequest fromUserToUserRequest(User myUser) {
         UserRequest myUserRq = new UserRequest();
         myUserRq.setName(myUser.getName());
         myUserRq.setSurname(myUser.getSurname());
         myUserRq.setEmail(myUser.getEmail());
         myUserRq.setPassword(myUser.getPassword());
-
         myUserRq.setBirthday(myUser.getBirthday());
         myUserRq.setGender(myUser.getGender());
-        myUserRq.setFacebookAlias(myUser.getFacebook_alias());
-        myUserRq.setTelegramAlias(myUser.getTelegram_alias());
-        myUserRq.setTwitterAlias(myUser.getTwitter_alias());
-        myUserRq.setLinkedinAlias(myUser.getLinkedin_alias());
-
-        myUserRq.setIsActive(myUser.getIsactive());
-        myUserRq.setConfirmedAt(myUser.getConfirmed_at());
+        myUserRq.setFacebookAlias(myUser.getFacebookAlias());
+        myUserRq.setTelegramAlias(myUser.getTelegramAlias());
+        myUserRq.setTwitterAlias(myUser.getTwitterAlias());
+        myUserRq.setLinkedinAlias(myUser.getLinkedinAlias());
+        myUserRq.setIsActive(myUser.getIsActive());
+        myUserRq.setConfirmedAt(myUser.getConfirmedAt());
         myUserRq.setRole(myUser.getRole().getName());
-
         return myUserRq;
     }
 
-    private User fromUserRequestToUser(UserRequest userRequest){
-        User myUser = new User();
-        myUser.setName(userRequest.getName());
-        myUser.setSurname(userRequest.getSurname());
-        myUser.setEmail(userRequest.getEmail());
-        myUser.setPassword(userRequest.getPassword());
-
-        myUser.setBirthday(userRequest.getBirthday());
-        myUser.setGender(userRequest.getGender());
-        myUser.setFacebook_alias(userRequest.getFacebookAlias());
-        myUser.setTelegram_alias(userRequest.getTelegramAlias());
-        myUser.setTwitter_alias(userRequest.getTwitterAlias());
-        myUser.setLinkedin_alias(userRequest.getLinkedinAlias());
-
-        myUser.setIsactive(userRequest.getIsActive());
-        myUser.setConfirmed_at(userRequest.getConfirmedAt());
-
+    private User fromUserRequestToUser(UserRequest userRequest) {
+        User myUser = new User(userRequest);
         RoleResponse roleResponse = roleService.getRole(userRequest.getRole());
-        myUser.setRole(roleService.RoleFromRoleResponse(roleResponse));
-
+        myUser.setRole(roleService.roleFromRoleResponse(roleResponse));
         return myUser;
     }
 
     public Boolean updatePassword(User myUser, String token) {
         try {
-            String uri = baseURL + "/" + myUser.getEmail();
-
+            String uri = BASE_URL + "/" + myUser.getEmail();
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Token", token);
-
+            headers.set(RequestConstants.TOKEN.getValue(), token);
             HttpEntity<String> entity = new HttpEntity<>(myUser.getPassword(), headers);
             try {
                 ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Object.class);
-
                 HttpStatus status = response.getStatusCode();
-
                 return status == HttpStatus.OK;
             } catch (Exception e) {
                 LOG.warn(e);
                 return false;
             }
-
-
-//            HttpEntity<String> entity = new HttpEntity<>(myUser);
-//            ResponseEntity<Boolean> response = restTemplate.exchange(uri, HttpMethod.POST, entity, UserRequest.class);
-//
-//            HttpStatus status = response.getStatusCode();
-//            UserRequest restCall = response.getBody();
-//
-//            if (status == HttpStatus.CREATED) {
-//                return true;
-//            }
         }
         catch (Exception ex){
             LOG.warn(ex.getMessage());
         }
-
         return false;
     }
 
 
-    @HystrixCommand( commandKey = "sendRessetPassordEmail", fallbackMethod = "sendRessetPassordEmailFallback", commandProperties = {
+    @HystrixCommand(commandKey = "sendRessetPassordEmail", fallbackMethod = "sendRessetPassordEmailFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "600000")
     })
-    public Boolean sendRessetPassordEmail(String UserName, String BackUrl, String Token){
-        String uri = "http://INNOMETRICS-AUTH-SERVER/AuthAPI/User/" + UserName + "/reset" ;
-
+    public Boolean sendRessetPassordEmail(String userName, String backUrl, String token) {
+        String uri = "http://INNOMETRICS-AUTH-SERVER/AuthAPI/User/" + userName + "/reset";
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Token", Token);
-
+        headers.set(RequestConstants.TOKEN.getValue(), token);
         HttpEntity<TeamListRequest> entity = new HttpEntity<>(headers);
-
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
-                .queryParam("BackUrl", BackUrl);
-
-        ResponseEntity<Boolean> response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, Boolean.class);
-
+                .queryParam("BackUrl", backUrl);
+        ResponseEntity<Boolean> response = restTemplate
+                .exchange(builder.toUriString(), HttpMethod.POST, entity, Boolean.class);
         return response.getBody();
-
     }
 
-    public Boolean sendRessetPassordEmailFallback(String UserName, String BackUrl, String Token , Throwable exception) {
-        LOG.warn("sendRessetPassordEmailFallback method used");
-        LOG.warn(exception);
-        return Boolean.FALSE;
-    }
-
-    @HystrixCommand( commandKey = "checkTemporalToken", fallbackMethod = "checkTemporalTokenFallback", commandProperties = {
+    @HystrixCommand(commandKey = "checkTemporalToken", fallbackMethod = "checkTemporalTokenFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "600000")
     })
-    public Boolean checkTemporalToken(String UserName, String TemporalToken){
-        String uri = "http://INNOMETRICS-AUTH-SERVER/AuthAPI/User/" + UserName + "/validate" ;
-
+    public Boolean checkTemporalToken(String userName, String temporalToken) {
+        String uri = "http://INNOMETRICS-AUTH-SERVER/AuthAPI/User/" + userName + "/validate";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
-                .queryParam("TemporalToken", TemporalToken);
-
-        ResponseEntity<Boolean> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null, Boolean.class);
-
+                .queryParam("TemporalToken", temporalToken);
+        ResponseEntity<Boolean> response = restTemplate
+                .exchange(builder.toUriString(), HttpMethod.GET, null, Boolean.class);
         return response.getBody();
-
-    }
-
-    public Boolean checkTemporalTokenFallback(String UserName, String TemporalToken, Throwable exception) {
-        LOG.warn("checkTemporalTokenFallback method used");
-        LOG.warn(exception);
-        return Boolean.FALSE;
     }
 }

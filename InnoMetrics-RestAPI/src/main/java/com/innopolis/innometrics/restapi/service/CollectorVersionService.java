@@ -2,33 +2,27 @@ package com.innopolis.innometrics.restapi.service;
 
 import com.innopolis.innometrics.restapi.entity.CollectorVersion;
 import com.innopolis.innometrics.restapi.repository.CollectorVersionRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class CollectorVersionService {
-    private static Logger LOG = LogManager.getLogger();
+    private final CollectorVersionRepository versionRepository;
 
-    @Autowired
-    CollectorVersionRepository versionRepository;
-
-    public String getCurrentVersion(String osversion){
-        CollectorVersion myVersion = versionRepository.findByOsversion(osversion);
-
+    public String getCurrentVersion(String osVersion) {
+        CollectorVersion myVersion = versionRepository.findByOsVersion(osVersion);
         if (myVersion != null)
             return myVersion.getValue();
         return "";
     }
 
-    public boolean updateCurrentVersion(String osversion, String newVersion){
-        CollectorVersion myVersion = versionRepository.findByOsversion(osversion);
+    public boolean updateCurrentVersion(String osVersion, String newVersion) {
+        CollectorVersion myVersion = versionRepository.findByOsVersion(osVersion);
         myVersion.setValue(newVersion);
         versionRepository.save(myVersion);
-
         return true;
     }
 }

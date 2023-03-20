@@ -1,10 +1,10 @@
 package com.innopolis.innometrics.restapi.controller;
 
+import com.innopolis.innometrics.restapi.config.JwtToken;
+import com.innopolis.innometrics.restapi.constants.ErrorMessages;
 import com.innopolis.innometrics.restapi.dto.PermissionResponse;
 import com.innopolis.innometrics.restapi.dto.UserRequest;
 import com.innopolis.innometrics.restapi.dto.UserResponse;
-import com.innopolis.innometrics.restapi.config.JwtToken;
-import com.innopolis.innometrics.restapi.constants.ErrorMessages;
 import com.innopolis.innometrics.restapi.entity.User;
 import com.innopolis.innometrics.restapi.exceptions.ValidationException;
 import com.innopolis.innometrics.restapi.service.PermissionService;
@@ -43,7 +43,7 @@ public class UserAPI {
         if (!userService.existsByEmail(userName)) {
             throw new ValidationException(USERNAME_DOES_NOT_EXIST.getMessage());
         }
-        PermissionResponse permissionResponse = permissionService.getPermissiosOfUser(userName);
+        PermissionResponse permissionResponse = permissionService.getPermissionOfUser(userName);
         return new ResponseEntity<>(permissionResponse, HttpStatus.OK);
     }
 
@@ -88,9 +88,9 @@ public class UserAPI {
             throw new ValidationException(USERNAME_DOES_NOT_EXIST.getMessage());
         }
         String userName = jwtTokenUtil.getUsernameFromToken(token);
-        myUser.setIsactive(Boolean.TRUE.equals(isActive) ? "Y" : "N");
-        myUser.setLastupdate(new Date());
-        myUser.setUpdateby(userName);
+        myUser.setIsActive(Boolean.TRUE.equals(isActive) ? "Y" : "N");
+        myUser.setLastUpdate(new Date());
+        myUser.setUpdateBy(userName);
         Boolean response = userService.update(myUser) != null;
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -102,22 +102,8 @@ public class UserAPI {
         if (user != null) {
             User myUser = userService.findByEmail(user.getEmail());
             if (myUser != null) {
-                //todo
-                String userName = token != null ? jwtTokenUtil.getUsernameFromToken(token) : "API";
-                myUser.setEmail(user.getEmail());
-                myUser.setName(user.getName());
-                myUser.setSurname(user.getSurname());
-                myUser.setBirthday(user.getBirthday());
-                myUser.setGender(user.getGender());
-                myUser.setFacebook_alias(user.getFacebookAlias());
-                myUser.setTelegram_alias(user.getTelegramAlias());
-                myUser.setTwitter_alias(user.getTwitterAlias());
-                myUser.setLinkedin_alias(user.getLinkedinAlias());
-                myUser.setUpdateby(userName);
-                myUser.setLastupdate(new Date());
-                myUser.setIsactive(user.getIsActive());
-                myUser.setConfirmed_at(user.getConfirmedAt());
-                Boolean response = userService.update(myUser) != null;
+                User newUser = userService.mapUser(myUser, user, token, jwtTokenUtil);
+                Boolean response = userService.update(newUser) != null;
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
             return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
@@ -141,8 +127,8 @@ public class UserAPI {
 
     @PostMapping("/{userName}/reset")
     public ResponseEntity<Boolean> sendTemporalToken(@PathVariable @NotBlank String userName,
-                                                     @RequestParam(required = true) String backUrl,
-                                                     @RequestHeader(required = true) String token) {
+                                                     @RequestParam() String backUrl,
+                                                     @RequestHeader() String token) {
         return ResponseEntity.ok(userService.sendRessetPassordEmail(userName, backUrl, token));
     }
 
@@ -156,7 +142,7 @@ public class UserAPI {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    private void handeException(MethodArgumentNotValidException e) {
+    private void handeException() {
         throw new ValidationException(ErrorMessages.NOT_ENOUGH_DATA.getMessage());
     }
 

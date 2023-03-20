@@ -48,7 +48,7 @@ public class CategoryAPI {
                                                            @RequestHeader(required = false) String token) {
 
         if (token == null) token = "";
-        CategoryResponse response = categoryService.UpdateCategory(categoryRequest, token);
+        CategoryResponse response = categoryService.updateCategory(categoryRequest, token);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -76,7 +76,7 @@ public class CategoryAPI {
                                                                  UriComponentsBuilder ucBuilder,
                                                                  @RequestHeader(required = false) String token) {
         if (token == null) token = "";
-        AppCategoryResponse response = categoryService.UpdateAppCategory(appCategoryRequest, token);
+        AppCategoryResponse response = categoryService.updateAppCategory(appCategoryRequest, token);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

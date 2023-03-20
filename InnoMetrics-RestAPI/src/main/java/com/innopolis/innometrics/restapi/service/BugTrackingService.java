@@ -1,77 +1,53 @@
 package com.innopolis.innometrics.restapi.service;
 
+import com.innopolis.innometrics.restapi.constants.RequestConstants;
 import com.innopolis.innometrics.restapi.dto.BugReportRequest;
 import com.innopolis.innometrics.restapi.dto.BugTrackingListRequest;
 import com.innopolis.innometrics.restapi.dto.BugTrackingRequest;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-
 @Service
-//@Transactional
+@RequiredArgsConstructor
 public class BugTrackingService {
+    private static final Logger LOG = LogManager.getLogger();
+    private static final String BASE_URL = "http://INNOMETRICS-COLLECTOR-SERVER/V1/Bug";
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private RestTemplate restTemplate;
-
-    private static Logger LOG = LogManager.getLogger();
-
-    private String baseURL = "http://INNOMETRICS-COLLECTOR-SERVER/V1/Bug";
-
-
-    @HystrixCommand( commandKey = "createBug", fallbackMethod = "createBugFallback", commandProperties = {
+    @HystrixCommand(commandKey = "createBug", fallbackMethod = "createBugFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public boolean createBug(BugReportRequest bug, String Token){
-        String uri = baseURL;
-
+    public boolean createBug(BugReportRequest bug, String token) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Token", Token);
-
+        headers.set(RequestConstants.TOKEN.getValue(), token);
         HttpEntity<BugReportRequest> entity = new HttpEntity<>(bug, headers);
         try {
-            ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Object.class);
-
+            ResponseEntity<Object> response = restTemplate.exchange(BASE_URL, HttpMethod.POST, entity, Object.class);
             HttpStatus status = response.getStatusCode();
-
             return status == HttpStatus.OK;
         } catch (Exception e) {
             LOG.warn(e);
             return false;
         }
-
     }
 
-    public boolean createBugFallback(BugTrackingRequest bug, String Token, Throwable exception) {
-        LOG.warn("createBugFallback method used");
-        LOG.warn(exception);
-        return false;
-    }
-
-
-    @HystrixCommand( commandKey = "updateBug", fallbackMethod = "updateBugFallback", commandProperties = {
+    @HystrixCommand(commandKey = "updateBug", fallbackMethod = "updateBugFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public boolean updateBug(BugTrackingRequest bug, String Token){
-        String uri = baseURL;
-
+    public boolean updateBug(BugTrackingRequest bug, String token) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Token", Token);
-
+        headers.set(RequestConstants.TOKEN.getValue(), token);
         HttpEntity<BugTrackingRequest> entity = new HttpEntity<>(bug, headers);
         try {
-            ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.PUT, entity, Object.class);
-
+            ResponseEntity<Object> response = restTemplate.exchange(BASE_URL, HttpMethod.PUT, entity, Object.class);
             HttpStatus status = response.getStatusCode();
-
             return status == HttpStatus.OK;
         } catch (Exception e) {
             LOG.warn(e);
@@ -79,93 +55,46 @@ public class BugTrackingService {
         }
     }
 
-    public boolean updateBugFallback(BugTrackingRequest bug, String Token, Throwable exception) {
-        LOG.warn("updateBugFallback method used");
-        LOG.warn(exception);
-        return false;
-    }
-
-    @HystrixCommand( commandKey = "findBugById", fallbackMethod = "findBugByIdFallback", commandProperties = {
+    @HystrixCommand(commandKey = "findBugById", fallbackMethod = "findBugByIdFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public BugTrackingRequest findBugById(Integer id, String Token){
-        String uri = baseURL ;
-
+    public BugTrackingRequest findBugById(Integer id, String token) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Token", Token);
-
+        headers.set(RequestConstants.TOKEN.getValue(), token);
         HttpEntity<BugTrackingRequest> entity = new HttpEntity<>(headers);
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .queryParam("bugId", id);
-
-        ResponseEntity<BugTrackingRequest> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, BugTrackingRequest.class);
-
-
+        ResponseEntity<BugTrackingRequest> response = restTemplate
+                .exchange(builder.toUriString(), HttpMethod.GET, entity, BugTrackingRequest.class);
         return response.getBody();
     }
 
-    public BugTrackingRequest findBugByIdFallback(Integer id, String Token, Throwable exception) {
-        LOG.warn("findBugByIdFallback method used");
-        LOG.warn(exception);
-        return new BugTrackingRequest();
-    }
-
-
-    @HystrixCommand( commandKey = "findBugsByParameters", fallbackMethod = "findBugsByParametersFallback", commandProperties = {
+    @HystrixCommand(commandKey = "findBugsByParameters", fallbackMethod = "findBugsByParametersFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public BugTrackingListRequest findBugsByParameters(Integer status, String creationdate1, String creationdate2, String Token){
-
-        String uri = baseURL + "/all";
-
+    public BugTrackingListRequest findBugsByParameters(Integer status, String creationDate1, String creationDate2, String token) {
+        String uri = BASE_URL + "/all";
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Token", Token);
-
+        headers.set(RequestConstants.TOKEN.getValue(), token);
         HttpEntity<BugTrackingListRequest> entity = new HttpEntity<>(headers);
-
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
-                .queryParam("creationdateFrom", creationdate1)
-                .queryParam("creationdateTo", creationdate2)
+                .queryParam("creationdateFrom", creationDate1)
+                .queryParam("creationdateTo", creationDate2)
                 .queryParam("status", status);
-
-        ResponseEntity<BugTrackingListRequest> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, BugTrackingListRequest.class);
-
-
+        ResponseEntity<BugTrackingListRequest> response = restTemplate
+                .exchange(builder.toUriString(), HttpMethod.GET, entity, BugTrackingListRequest.class);
         return response.getBody();
-
-    }
-
-    public BugTrackingListRequest findBugsByParametersFallback(Integer status,String creationdate1, String creationdate2,
-                                                                String Token, Throwable exception) {
-        LOG.warn("findBugsByParametersFallback method used");
-        LOG.warn(exception);
-        return new BugTrackingListRequest();
     }
 
     @HystrixCommand( commandKey = "deleteBug", fallbackMethod = "deleteBugFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public void deleteBug(Integer id, String token) {
-
-        String uri = baseURL;
-
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Token", token);
-
+        headers.set(RequestConstants.TOKEN.getValue(), token);
         HttpEntity<BugTrackingRequest> entity = new HttpEntity<>(headers);
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .queryParam("bugId", id);
-
-
         restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, entity, Object.class);
-
     }
-
-    public void deleteBugFallback(Integer id, String Token, Throwable exception) {
-        LOG.warn("deleteBugFallback method used");
-        LOG.warn(exception);
-    }
-
 }

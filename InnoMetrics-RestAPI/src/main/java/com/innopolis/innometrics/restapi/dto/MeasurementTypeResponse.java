@@ -21,16 +21,16 @@ public class MeasurementTypeResponse implements Serializable {
     private String updateBy;
 
     public MeasurementTypeResponse(MeasurementType measurementType) {
-        this.measurementTypeId = measurementType.getMeasurementtypeid();
+        this.measurementTypeId = measurementType.getMeasurementTypeId();
         this.label = measurementType.getLabel();
         this.description = measurementType.getDescription();
         this.weight = measurementType.getWeight();
         this.scale = measurementType.getScale();
         this.operation = measurementType.getOperation();
-        this.isActive = measurementType.getIsactive();
-        this.creationDate = measurementType.getCreationdate();
-        this.createdBy = measurementType.getCreatedby();
-        this.lastupdate = measurementType.getLastupdate();
-        this.updateBy = measurementType.getUpdateby();
+        this.isActive = measurementType.getIsActive();
+        this.creationDate = measurementType.getCreationDate();
+        this.createdBy = measurementType.getCreatedBy();
+        this.lastupdate = measurementType.getLastUpdate();
+        this.updateBy = measurementType.getUpdateBy();
     }
 }

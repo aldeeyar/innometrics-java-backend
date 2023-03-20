@@ -5,9 +5,14 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum HeaderConstants {
+public enum RequestConstants {
 
-    TOKEN("Token");
+    TOKEN("Token"),
+    EMAIL("email"),
+    MIN_DATE("min_Date"),
+    MAX_DATE("max_Date"),
+    ID("id"),
+    DATE_PATTERN("dd/MM/yyyy");
 
     private final String value;
 }
