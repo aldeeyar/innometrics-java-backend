@@ -34,11 +34,13 @@ public class RoleService {
         pageListResponse = response.getBody();
         if (status == HttpStatus.NO_CONTENT) return Collections.emptyList();
         List<Page> pages = new ArrayList<>();
-        for (PageResponse pageResponse : pageListResponse.getPageList()) {
-            Page page = new Page();
-            page.setIcon(pageResponse.getIcon());
-            page.setPage(pageResponse.getPage());
-            pages.add(page);
+        if (pageListResponse != null && !pageListResponse.getPageList().isEmpty()) {
+            for (PageResponse pageResponse : pageListResponse.getPageList()) {
+                Page page = new Page();
+                page.setIcon(pageResponse.getIcon());
+                page.setPage(pageResponse.getPage());
+                pages.add(page);
+            }
         }
         return pages;
     }

@@ -56,7 +56,9 @@ public class UserService implements UserDetailsService {
         HttpStatus status = response.getStatusCode();
         user = response.getBody();
         if (status == HttpStatus.NO_CONTENT) return null;
-        return fromUserRequestToUser(user);
+        if (user != null) {
+            return fromUserRequestToUser(user);
+        } else return new User();
     }
 
 
