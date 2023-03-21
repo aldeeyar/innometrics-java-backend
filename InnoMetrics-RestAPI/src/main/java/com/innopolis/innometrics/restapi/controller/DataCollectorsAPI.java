@@ -7,7 +7,8 @@ import com.innopolis.innometrics.restapi.service.CategoryService;
 import com.innopolis.innometrics.restapi.service.ProcessService;
 import com.innopolis.innometrics.restapi.service.ReportService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,6 @@ import java.util.Date;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "/V1", produces = MediaType.APPLICATION_JSON_VALUE)
-@Slf4j
 @RequiredArgsConstructor
 public class DataCollectorsAPI {
 
@@ -31,6 +31,7 @@ public class DataCollectorsAPI {
     private final ProcessService processService;
     private final ReportService reportService;
     private final CategoryService categoryService;
+    private static final Logger LOG = LogManager.getLogger();
 
 
     @GetMapping("/activity")
@@ -46,7 +47,7 @@ public class DataCollectorsAPI {
                                           @RequestHeader String token) {
 
         String username = jwtTokenUtil.getUsernameFromToken(token);
-        log.info("A request received from " + username + ", with " + report.getActivities().size() + " activities");
+        LOG.info("A request received from {} , with {} activities", username, report.getActivities().size());
         if (report.getActivities().size() > 1000 || report.getActivities().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.PAYLOAD_TOO_LARGE);
         }
@@ -78,7 +79,7 @@ public class DataCollectorsAPI {
                                                  UriComponentsBuilder ucBuilder,
                                                  @RequestHeader String token) {
         String username = jwtTokenUtil.getUsernameFromToken(token);
-        log.info("A request received from " + username + ", with " + report.getProcessReports().size() + " process");
+        LOG.info("A request received from {}, with {} process", username, report.getProcessReports().size());
         if (report.getProcessReports().size() > 1000 || report.getProcessReports().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.PAYLOAD_TOO_LARGE);
         }

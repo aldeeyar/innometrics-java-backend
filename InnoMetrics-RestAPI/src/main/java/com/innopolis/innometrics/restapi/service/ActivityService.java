@@ -7,7 +7,6 @@ import com.innopolis.innometrics.restapi.dto.Report;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.*;
@@ -22,7 +21,6 @@ import java.util.Date;
 import static com.innopolis.innometrics.restapi.constants.RequestConstants.DATE_PATTERN;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class ActivityService {
     private static final String BASE_URL = "http://INNOMETRICS-COLLECTOR-SERVER/V1/activity/";

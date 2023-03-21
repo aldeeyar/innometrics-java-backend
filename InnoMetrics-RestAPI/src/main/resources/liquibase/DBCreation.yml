@@ -26,7 +26,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: isactive
+                  name: is_active
                   type: Varchar(1)
                   constraints:
                     nullable: false
@@ -78,7 +78,7 @@ databaseChangeLog:
                     nullable: false
                   defaultValueComputed: current_timestamp
               - column:
-                  name: isactive
+                  name: is_active
                   type: Varchar(1)
                   constraints:
                     nullable: false
@@ -138,7 +138,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: isactive
+                  name: is_active
                   type: Varchar(1)
                   constraints:
                     nullable: false
@@ -243,14 +243,14 @@ databaseChangeLog:
             remarks: Table to store activities information
             columns:
               - column:
-                  name: activityid
+                  name: activity_id
                   type: Integer
                   autoIncrement: true
                   constraints:
                     primaryKey: true
                     primaryKeyName: activity_pk
               - column:
-                  name: activitytype
+                  name: activity_type
                   type: Varchar(256)
                   constraints:
                     nullable: false
@@ -352,7 +352,7 @@ databaseChangeLog:
                   name: operation
                   type: Varchar(100)
               - column:
-                  name: isActive
+                  name: is_active
                   type: varchar(1)
                   constraints:
                     nullable: false
@@ -388,11 +388,11 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: measurements_pk
               - column:
-                  name: activityid
+                  name: activity_id
                   type: Integer
                   constraints:
                     foreignKeyName: fk_activity_measurement
-                    references: innometrics.activity(activityid)
+                    references: innometrics.activity(activity_id)
                     nullable: false
               - column:
                   name: measurementtypeid
@@ -425,16 +425,6 @@ databaseChangeLog:
                   name: updateby
                   type: Varchar(25)
   - changeSet:
-      id: rename_column
-      author: xvasquez
-      changes:
-        - renameColumn:
-            schemaName: innometrics
-            tableName: measurementtypes
-            columnDataType: varchar(1)
-            newColumnName: isactive
-            oldColumnName: isActive
-  - changeSet:
       id: refactor_measurement_table
       author: xvasquez
       changes:
@@ -448,7 +438,7 @@ databaseChangeLog:
             tableName: measurements
             columns:
               - column:
-                  name: alternativelabel
+                  name: alternative_label
                   type: Varchar(256)
   - changeSet:
       id: remove_fk_for_activitie_users
@@ -475,7 +465,7 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: collectorversion_pk
               - column:
-                  name: osversion
+                  name: os_version
                   type: Varchar(128)
                   constraints:
                     nullable: false

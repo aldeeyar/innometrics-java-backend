@@ -1,6 +1,7 @@
 package com.innopolis.innometrics.restapi.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.util.Date;
 @Entity
 @Table(name = "collector_version")
 @Data
+@NoArgsConstructor
 public class CollectorVersion implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

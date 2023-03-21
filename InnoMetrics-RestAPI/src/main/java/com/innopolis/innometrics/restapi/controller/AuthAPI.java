@@ -1,11 +1,12 @@
 package com.innopolis.innometrics.restapi.controller;
 
+import com.innopolis.innometrics.restapi.config.JwtToken;
 import com.innopolis.innometrics.restapi.dto.AuthRequest;
 import com.innopolis.innometrics.restapi.dto.AuthResponse;
-import com.innopolis.innometrics.restapi.config.JwtToken;
 import com.innopolis.innometrics.restapi.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +20,17 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*", methods = RequestMethod.POST)
 @RequiredArgsConstructor
-@Slf4j
 public class AuthAPI {
     private final AuthenticationManager authenticationManager;
     @Autowired
     private JwtToken jwtToken;
     private final UserService userService;
+    private static final Logger LOG = LogManager.getLogger();
 
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authenticationRequest) throws Exception {
-        log.info("Request received from: " + authenticationRequest.getEmail());
+        LOG.info("Request received from:{} ", authenticationRequest.getEmail());
         authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
         final UserDetails userDetails = userService
                 .loadUserByUsername(authenticationRequest.getEmail());

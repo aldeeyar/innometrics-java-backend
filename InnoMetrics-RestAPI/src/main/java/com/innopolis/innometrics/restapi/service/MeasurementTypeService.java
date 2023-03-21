@@ -8,7 +8,6 @@ import com.innopolis.innometrics.restapi.entity.MeasurementType;
 import com.innopolis.innometrics.restapi.exceptions.ValidationException;
 import com.innopolis.innometrics.restapi.repository.MeasurementTypeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -17,10 +16,8 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class MeasurementTypeService {
     private final MeasurementTypeRepository measurementTypeRepository;
-    @Autowired
-    private JwtToken jwtTokenUtil;
 
-    public MeasurementTypeResponse createMeasurement(MeasurementTypeRequest measurementType, String token) {
+    public MeasurementTypeResponse createMeasurement(MeasurementTypeRequest measurementType, String token, JwtToken jwtTokenUtil) {
         if (Boolean.TRUE.equals(measurementTypeRepository.existsByLabel(measurementType.getLabel()))) {
             throw new ValidationException(ErrorMessages.MEASUREMENT_TYPE_EXISTS.getMessage());
         }

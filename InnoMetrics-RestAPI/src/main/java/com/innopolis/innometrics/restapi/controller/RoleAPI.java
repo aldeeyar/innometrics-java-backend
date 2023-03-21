@@ -25,7 +25,6 @@ import static com.innopolis.innometrics.restapi.constants.ErrorMessages.*;
         methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE})
 @RequestMapping(value = "/V1/Admin/Role", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
-
 public class RoleAPI {
     private final RoleService roleService;
     private final PermissionService permissionService;
