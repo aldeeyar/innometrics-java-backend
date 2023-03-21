@@ -16,7 +16,7 @@ public class Project implements Serializable {
     private String projectID;
     @Column
     private String name;
-    @Column
+    @Column(name = "isactive")
     private String isActive;
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationDate;

@@ -3,8 +3,8 @@ databaseChangeLog:
       id: SchemaCreation_innometrics
       author: xvasquez
       changes:
-          # SOMETHING WRONG SAME SCHEMA IN ACTIVITIES COLLECTOR!!!
-      - sql: "CREATE SCHEMA innometrics;"
+        # SOMETHING WRONG SAME SCHEMA IN ACTIVITIES COLLECTOR!!!
+        - sql: "CREATE SCHEMA innometrics;"
   - changeSet:
       id: DatabaseCreation_innometrics
       author: xvasquez
@@ -26,7 +26,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: is_active
+                  name: isactive
                   type: Varchar(1)
                   constraints:
                     nullable: false
@@ -78,7 +78,7 @@ databaseChangeLog:
                     nullable: false
                   defaultValueComputed: current_timestamp
               - column:
-                  name: is_active
+                  name: isactive
                   type: Varchar(1)
                   constraints:
                     nullable: false
@@ -138,7 +138,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: is_active
+                  name: isactive
                   type: Varchar(1)
                   constraints:
                     nullable: false
@@ -243,14 +243,14 @@ databaseChangeLog:
             remarks: Table to store activities information
             columns:
               - column:
-                  name: activity_id
+                  name: activityid
                   type: Integer
                   autoIncrement: true
                   constraints:
                     primaryKey: true
                     primaryKeyName: activity_pk
               - column:
-                  name: activity_type
+                  name: activitytype
                   type: Varchar(256)
                   constraints:
                     nullable: false
@@ -352,7 +352,7 @@ databaseChangeLog:
                   name: operation
                   type: Varchar(100)
               - column:
-                  name: is_active
+                  name: isActive
                   type: varchar(1)
                   constraints:
                     nullable: false
@@ -388,11 +388,11 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: measurements_pk
               - column:
-                  name: activity_id
+                  name: activityid
                   type: Integer
                   constraints:
                     foreignKeyName: fk_activity_measurement
-                    references: innometrics.activity(activity_id)
+                    references: innometrics.activity(activityid)
                     nullable: false
               - column:
                   name: measurementtypeid
@@ -425,6 +425,16 @@ databaseChangeLog:
                   name: updateby
                   type: Varchar(25)
   - changeSet:
+      id: rename_column
+      author: xvasquez
+      changes:
+        - renameColumn:
+            schemaName: innometrics
+            tableName: measurementtypes
+            columnDataType: varchar(1)
+            newColumnName: isactive
+            oldColumnName: isActive
+  - changeSet:
       id: refactor_measurement_table
       author: xvasquez
       changes:
@@ -438,7 +448,7 @@ databaseChangeLog:
             tableName: measurements
             columns:
               - column:
-                  name: alternative_label
+                  name: alternativelabel
                   type: Varchar(256)
   - changeSet:
       id: remove_fk_for_activitie_users
@@ -465,7 +475,7 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: collectorversion_pk
               - column:
-                  name: os_version
+                  name: osversion
                   type: Varchar(128)
                   constraints:
                     nullable: false

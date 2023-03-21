@@ -25,7 +25,7 @@ public class MeasurementType implements Serializable {
     private Float scale;
     @Column
     private String operation;
-    @Column
+    @Column(name = "isactive")
     private String isActive;
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationDate;

@@ -16,10 +16,10 @@ public class Activity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(updatable = false)
+    @Column(updatable = false, name = "activityid")
     private Integer activityId;
 
-    @Column
+    @Column(name = "activitytype")
     private String activityType;
 
     @Column

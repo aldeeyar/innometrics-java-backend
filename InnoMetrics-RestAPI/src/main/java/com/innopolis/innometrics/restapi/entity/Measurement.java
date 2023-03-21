@@ -21,7 +21,7 @@ public class Measurement implements Serializable {
     private MeasurementType measurementType;
     @Column
     private String value;
-    @Column
+    @Column(name = "alternativelabel")
     private String alternativeLabel;
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationDate;

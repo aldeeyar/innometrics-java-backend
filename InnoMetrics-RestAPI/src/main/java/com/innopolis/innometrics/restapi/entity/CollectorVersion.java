@@ -17,7 +17,7 @@ public class CollectorVersion implements Serializable {
     @Column(updatable = false)
     private Integer id;
 
-    @Column
+    @Column(name = "osversion")
     private String osVersion;
 
     @Column

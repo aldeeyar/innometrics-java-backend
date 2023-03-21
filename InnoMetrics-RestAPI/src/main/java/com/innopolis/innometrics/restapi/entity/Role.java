@@ -18,7 +18,7 @@ public class Role implements Serializable {
     private String name;
     @Column
     private String description;
-    @Column
+    @Column(name = "isactive")
     private String isActive;
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationDate;
