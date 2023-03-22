@@ -14,13 +14,13 @@ public class CollectorAPI {
     private final CollectorVersionService collectorVersionService;
 
     @GetMapping()
-    public String getCollectorVersion(@RequestParam(required = true) String osversion) {
+    public String getCollectorVersion(@RequestParam String osversion) {
         return collectorVersionService.getCurrentVersion(osversion);
     }
 
     @PutMapping()
-    public Boolean updateCollectorVersion(@RequestParam(required = true) String osversion,
-                                          @RequestParam(required = true) String newVersion) {
+    public Boolean updateCollectorVersion(@RequestParam String osversion,
+                                          @RequestParam String newVersion) {
         return collectorVersionService.updateCurrentVersion(osversion, newVersion);
     }
 }
