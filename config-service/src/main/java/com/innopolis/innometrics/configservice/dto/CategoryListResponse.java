@@ -1,9 +1,16 @@
-package com.innopolis.innometrics.configservice.DTO;
+package com.innopolis.innometrics.configservice.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
+@Getter
+@Setter
 public class CategoryListResponse implements Serializable {
     private List<CategoryResponse> categoryList;
 
@@ -11,15 +18,7 @@ public class CategoryListResponse implements Serializable {
         categoryList = new ArrayList<>();
     }
 
-    public CategoryListResponse(List<CategoryResponse> categoryList) {
-        this.categoryList = categoryList;
-    }
-
     public List<CategoryResponse> getCategoryList() {
         return categoryList;
-    }
-
-    public void setCategoryList(List<CategoryResponse> categoryList) {
-        this.categoryList = categoryList;
     }
 }
