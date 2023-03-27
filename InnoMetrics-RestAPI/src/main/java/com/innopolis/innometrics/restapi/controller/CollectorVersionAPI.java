@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
         methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE})
 @RequestMapping(value = "/V1/Admin/collector-version", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
-public class CollectorAPI {
+public class CollectorVersionAPI {
     private final CollectorVersionService collectorVersionService;
 
     @GetMapping()
