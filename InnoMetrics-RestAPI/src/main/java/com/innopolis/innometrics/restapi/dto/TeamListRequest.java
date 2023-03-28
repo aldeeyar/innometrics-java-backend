@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class TeamListRequest {
-    List<TeamRequest> teamRequestList;
+    private List<TeamRequest> teamRequestList;
 }

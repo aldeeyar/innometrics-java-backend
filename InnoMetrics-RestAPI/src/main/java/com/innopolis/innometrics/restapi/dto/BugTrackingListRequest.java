@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class BugTrackingListRequest {
-    List<BugTrackingRequest> bugTrackingRequests;
+    private List<BugTrackingRequest> bugTrackingRequests;
 }

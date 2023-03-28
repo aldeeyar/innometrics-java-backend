@@ -7,5 +7,5 @@ import java.util.List;
 
 @Data
 public class RoleListResponse implements Serializable {
-    List<RoleResponse> roleList;
+    private List<RoleResponse> roleList;
 }

@@ -7,5 +7,5 @@ import java.util.List;
 
 @Data
 public class UserListResponse implements Serializable {
-    List<UserResponse> userList;
+    private List<UserResponse> userList;
 }

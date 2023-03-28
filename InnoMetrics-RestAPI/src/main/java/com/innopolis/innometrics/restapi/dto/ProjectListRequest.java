@@ -7,5 +7,5 @@ import java.util.List;
 
 @Data
 public class ProjectListRequest implements Serializable {
-    List<ProjectRequest> projectList;
+    private List<ProjectRequest> projectList;
 }

@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class CompanyListRequest {
-    List<CompanyRequest> companyRequestList;
+    private List<CompanyRequest> companyRequestList;
 }

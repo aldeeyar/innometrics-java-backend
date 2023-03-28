@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class TeammembersListRequest {
-    List<TeammembersRequest> teamMembersRequestList;
+    private List<TeammembersRequest> teamMembersRequestList;
 }

@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class WorkingTreeListRequest {
-    List<WorkingTreeRequest> workingTreeRequests;
+    private List<WorkingTreeRequest> workingTreeRequests;
 }

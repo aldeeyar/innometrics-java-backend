@@ -7,9 +7,5 @@ import java.util.List;
 
 @Data
 public class PageListResponse implements Serializable {
-    List<PageResponse> pageList;
-
-    public void addPageResponse(PageResponse pageResponse) {
-        this.pageList.add(pageResponse);
-    }
+    private List<PageResponse> pageList;
 }

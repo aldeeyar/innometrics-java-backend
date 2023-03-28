@@ -7,5 +7,5 @@ import java.util.List;
 
 @Data
 public class PageListRequest implements Serializable {
-    List<PageRequest> pageList;
+    private List<PageRequest> pageList;
 }

@@ -22,34 +22,34 @@ public class Activity implements Serializable {
     @Column(name = "activitytype")
     private String activityType;
 
-    @Column
+    @Column(name = "idle_activity")
     private Boolean idleActivity;
 
-    @Column
+    @Column(name = "email")
     private String email;
 
-    @Column
+    @Column(name = "start_time")
     private Date startTime;
 
-    @Column
+    @Column(name = "end_time")
     private Date endTime;
 
-    @Column
+    @Column(name = "executable_name")
     private String executableName;
 
-    @Column
+    @Column(name = "browser_url")
     private String browserUrl;
 
-    @Column
+    @Column(name = "browser_title")
     private String browserTitle;
 
-    @Column
+    @Column(name = "ip_address")
     private String ipAddress;
 
-    @Column
+    @Column(name = "mac_address")
     private String macAddress;
 
-    @Column
+    @Column(name = "value")
     private String value;
 
     @Column(name = "creationdate", insertable = false, updatable = false)
