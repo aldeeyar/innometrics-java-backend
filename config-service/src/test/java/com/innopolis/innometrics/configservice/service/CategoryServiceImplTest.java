@@ -5,7 +5,7 @@ import com.innopolis.innometrics.configservice.dto.CategoryRequest;
 import com.innopolis.innometrics.configservice.dto.CategoryResponse;
 import com.innopolis.innometrics.configservice.entities.CategoryEntity;
 import com.innopolis.innometrics.configservice.repository.CategoryRepository;
-import com.innopolis.innometrics.configservice.services.CategoryService;
+import com.innopolis.innometrics.configservice.services.CategoryServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -19,12 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @DataJpaTest
 @ActiveProfiles("test")
 @Import(value = {
-        CategoryService.class
+        CategoryServiceImpl.class
 })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class CategoryServiceTest {
+class CategoryServiceImplTest {
     @Autowired
-    CategoryService categoryService;
+    CategoryServiceImpl categoryServiceImpl;
     @Autowired
     CategoryRepository categoryRepository;
 
@@ -33,53 +33,53 @@ class CategoryServiceTest {
 
     @Test
     void getCategoriesListEmptyRepositoryTest() {
-        CategoryListResponse response = categoryService.getCategoriesList();
+        CategoryListResponse response = categoryServiceImpl.getCategoriesList();
         assertEquals(0, response.getCategoryList().size());
     }
 
     @Test
     void getCategoriesListNonEmptyTest() {
         categoryRepository.save(createCategoryEntity());
-        CategoryListResponse response = categoryService.getCategoriesList();
+        CategoryListResponse response = categoryServiceImpl.getCategoriesList();
         assertEquals(1, response.getCategoryList().size());
     }
 
     @Test
     void getCategoryByIDEmptyRepositoryTest() {
-        CategoryResponse response = categoryService.getCategoryByID(1);
+        CategoryResponse response = categoryServiceImpl.getCategoryByID(1);
         assertNull(response);
     }
 
     @Test
     void getCategoryByIDNonEmptyRepositoryTest() {
         categoryRepository.save(createCategoryEntity());
-        CategoryResponse response = categoryService.getCategoryByID(1);
+        CategoryResponse response = categoryServiceImpl.getCategoryByID(1);
         assertEquals(TEST, response.getCreatedBy());
     }
 
     @Test
     void existsByNameNonEmptyRepositoryTest() {
         categoryRepository.save(createCategoryEntity());
-        Boolean response = categoryService.existsByName(TEST);
+        Boolean response = categoryServiceImpl.existsByName(TEST);
         assertEquals(true, response);
     }
 
     @Test
     void existsByNameEmptyRepositoryTest() {
-        Boolean response = categoryService.existsByName(TEST);
+        Boolean response = categoryServiceImpl.existsByName(TEST);
         assertEquals(false, response);
     }
 
     @Test
     void saveEmptyRepositoryTest() {
-        CategoryResponse response = categoryService.save(createCategoryRequest());
+        CategoryResponse response = categoryServiceImpl.save(createCategoryRequest());
         assertEquals(TEST1, response.getCatName());
     }
 
     @Test
     void saveNonEmptyRepositoryTest() {
         categoryRepository.save(createCategoryEntity());
-        CategoryResponse response = categoryService.save(createCategoryRequest());
+        CategoryResponse response = categoryServiceImpl.save(createCategoryRequest());
         assertEquals(TEST1, response.getCatName());
     }
 
