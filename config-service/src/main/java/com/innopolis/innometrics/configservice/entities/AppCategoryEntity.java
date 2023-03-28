@@ -23,11 +23,11 @@ public class AppCategoryEntity implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "catid")
     private CategoryEntity categoryEntity;
-    @Column
+    @Column(name = "appname")
     private String appName;
-    @Column
+    @Column(name = "appdescription")
     private String appDescription;
-    @Column
+    @Column(name = "executablefile")
     private String executableFile;
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationDate;
