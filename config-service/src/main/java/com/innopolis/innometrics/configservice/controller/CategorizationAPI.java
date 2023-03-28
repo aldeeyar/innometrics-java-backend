@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class CategorizationAPI {
     private final CategoryService categoryService;
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<CategoryListResponse> getCategories(@RequestHeader(required = false) String token) {
         CategoryListResponse response = categoryService.getCategoriesList();
         return ResponseEntity.ok(response);
@@ -28,14 +28,14 @@ public class CategorizationAPI {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest category,
                                                            @RequestHeader(required = false) String token) {
         CategoryResponse response = categoryService.save(category);
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping
+    @PutMapping()
     public ResponseEntity<CategoryResponse> updateCategory(@RequestBody CategoryRequest category,
                                                            @RequestHeader(required = false) String token) {
         return ResponseEntity.ok(categoryService.save(category));

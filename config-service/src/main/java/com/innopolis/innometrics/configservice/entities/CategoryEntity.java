@@ -23,7 +23,7 @@ public class CategoryEntity {
     private Integer catId;
     @Column(name = "catname")
     private String catName;
-    @Column
+    @Column(name = "catdescription")
     private String catDescription;
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationDate;
