@@ -16,15 +16,11 @@ import java.sql.Timestamp;
 @Entity
 @Table
 public class TemporalToken {
-
     @Id
     @Column(updatable = false)
     private String email;
-
     @Column(updatable = false)
     private String temporalToken;
-
     @Column(name = "expiration_date", updatable = false)
     private Timestamp expirationDate;
-
 }

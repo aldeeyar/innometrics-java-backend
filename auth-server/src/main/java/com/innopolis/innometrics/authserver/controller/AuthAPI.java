@@ -1,186 +1,156 @@
 package com.innopolis.innometrics.authserver.controller;
 
-import com.innopolis.innometrics.authserver.DTO.UserRequest;
 import com.innopolis.innometrics.authserver.config.JwtToken;
+import com.innopolis.innometrics.authserver.constants.ExceptionMessage;
+import com.innopolis.innometrics.authserver.constants.RequestConstants;
+import com.innopolis.innometrics.authserver.dto.UserRequest;
 import com.innopolis.innometrics.authserver.entitiy.User;
+import com.innopolis.innometrics.authserver.exceptions.ValidationException;
 import com.innopolis.innometrics.authserver.service.RoleService;
 import com.innopolis.innometrics.authserver.service.UserService;
-import com.innopolis.innometrics.authserver.exceptions.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.Date;
 
 @RestController
-//@CrossOrigin
 @RequestMapping("AuthAPI")
+@RequiredArgsConstructor
 public class AuthAPI {
-
-    @Autowired
-    private JwtToken jwtToken;
-
-    @Autowired
-    private UserService userService;
-
-
-    @Autowired
-    private RoleService roleService;
+    private final JwtToken jwtToken;
+    private final UserService userService;
+    private final RoleService roleService;
 
     @PostMapping("/User")
-    public ResponseEntity<UserRequest> CreateUser(@RequestBody UserRequest user, @RequestHeader(required = false) String Token) {
-        System.out.println("Create user method started");
-        String UserName = "API";
-
+    public ResponseEntity<UserRequest> createUser(@RequestBody UserRequest user,
+                                                  @RequestHeader(required = false) String token) {
+        String userName = RequestConstants.API.getValue();
         if (user == null)
-            throw new ValidationException("Not enough data provided");
-
+            throw new ValidationException(ExceptionMessage.NOT_ENOUGH_DATA.getValue());
         if (user.getEmail() == null || user.getName() == null || user.getSurname() == null || user.getPassword() == null)
-            throw new ValidationException("Not enough data provided");
-
-        if (userService.existsByEmail(user.getEmail()))
-            throw new ValidationException("Username already existed");
-
-        if (roleService.findByName(user.getRole())== null) {
-            throw new ValidationException("No such role");
+            throw new ValidationException(ExceptionMessage.NOT_ENOUGH_DATA.getValue());
+        if (Boolean.TRUE.equals(userService.existsByEmail(user.getEmail())))
+            throw new ValidationException(ExceptionMessage.USERNAME_ALREADY_EXIST.getValue());
+        if (roleService.findByName(user.getRole()) == null) {
+            throw new ValidationException(ExceptionMessage.NO_SUCH_ROLE.getValue());
         }
-
-        if (Token != null)
-            UserName = jwtToken.getUsernameFromToken(Token);
-
-
-        System.out.println("New user creation...");
+        if (token != null)
+            userName = jwtToken.getUsernameFromToken(token);
         User myUser = new User();
         myUser.setEmail(user.getEmail());
         myUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         myUser.setName(user.getName());
         myUser.setSurname(user.getSurname());
-        myUser.setCreationdate(new Date());
-        myUser.setCreatedby(UserName);
+        myUser.setCreationDate(new Date());
+        myUser.setCreatedBy(userName);
         myUser.setRole(roleService.findByName(user.getRole()));
-        myUser.setIsactive("Y");
-
+        myUser.setIsActive("Y");
         myUser = userService.save(myUser);
-        System.out.println("New user saved...");
-
         return new ResponseEntity<>(userService.fromUserToUserRequest(myUser), HttpStatus.CREATED);
     }
 
     @PutMapping("/User")
-    public ResponseEntity<UserRequest> updateUser(@RequestBody  UserRequest user, @RequestHeader(required = true) String Token) {
+    public ResponseEntity<UserRequest> updateUser(@RequestBody UserRequest user,
+                                                  @RequestHeader() String token) {
         if (user != null) {
-            User myUser  = userService.findByEmail(user.getEmail());
-
-            if (roleService.findByName(user.getRole())== null) {
-                throw new ValidationException("No such role");
+            User myUser = userService.findByEmail(user.getEmail());
+            if (roleService.findByName(user.getRole()) == null) {
+                throw new ValidationException(ExceptionMessage.NO_SUCH_ROLE.getValue());
             }
-
-            if(myUser != null){
-                String UserName = Token != null ? jwtToken.getUsernameFromToken(Token) : "API";
-
+            if (myUser != null) {
+                String userName = token != null ? jwtToken.getUsernameFromToken(token) : RequestConstants.API.getValue();
                 myUser.setEmail(user.getEmail());
                 myUser.setName(user.getName());
                 myUser.setSurname(user.getSurname());
-
                 myUser.setBirthday(user.getBirthday());
                 myUser.setGender(user.getGender());
-                myUser.setFacebook_alias(user.getFacebook_alias());
-                myUser.setTelegram_alias(user.getTelegram_alias());
-                myUser.setTwitter_alias(user.getTwitter_alias());
-                myUser.setLinkedin_alias(user.getLinkedin_alias());
-
-                myUser.setUpdateby(UserName);
-                myUser.setLastupdate(new Date());
-                myUser.setIsactive(user.getIsactive());
-                myUser.setConfirmed_at(user.getConfirmed_at());
+                myUser.setFacebookAlias(user.getFacebookAlias());
+                myUser.setTelegramAlias(user.getTelegramAlias());
+                myUser.setTwitterAlias(user.getTwitterAlias());
+                myUser.setLinkedinAlias(user.getLinkedinAlias());
+                myUser.setUpdateBy(userName);
+                myUser.setLastUpdate(new Date());
+                myUser.setIsActive(user.getIsActive());
+                myUser.setConfirmedAt(user.getConfirmedAt());
                 myUser.setRole(roleService.findByName(user.getRole()));
-
                 myUser = userService.save(myUser);
-
                 return ResponseEntity.ok(userService.fromUserToUserRequest(myUser));
             }
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         } else
-            throw new ValidationException("Not enough data provided");
+            throw new ValidationException(ExceptionMessage.NOT_ENOUGH_DATA.getValue());
     }
 
 
-    @PostMapping("/User/{UserName}")
-    public ResponseEntity<Boolean> updateUserPassword(@PathVariable String UserName, @RequestBody  String Password, @RequestHeader(required = true) String Token) {
-        if (UserName != null) {
-            User myUser  = userService.findByEmail(UserName);
-
-            if(myUser != null){
-
-                myUser.setPassword(new BCryptPasswordEncoder().encode(Password));
-
-                myUser = userService.save(myUser);
-
+    @PostMapping("/User/{userName}")
+    public ResponseEntity<Boolean> updateUserPassword(@PathVariable String userName,
+                                                      @RequestBody String password,
+                                                      @RequestHeader() String token) {
+        if (userName != null) {
+            User myUser = userService.findByEmail(userName);
+            if (myUser != null) {
+                myUser.setPassword(new BCryptPasswordEncoder().encode(password));
+                userService.save(myUser);
                 return ResponseEntity.ok(true);
             }
             return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
         } else
-            throw new ValidationException("Not enough data provided");
+            throw new ValidationException(ExceptionMessage.NOT_ENOUGH_DATA.getValue());
     }
 
-    @GetMapping("/User/{UserName}")
-    public ResponseEntity<UserRequest> getUserByName(@PathVariable String UserName) {
-        if (!UserName.isEmpty()) {
-            User userDetails = userService.findByEmail(UserName);
-
-            if(userDetails == null)
+    @GetMapping("/User/{userName}")
+    public ResponseEntity<UserRequest> getUserByName(@PathVariable String userName) {
+        if (!userName.isEmpty()) {
+            User userDetails = userService.findByEmail(userName);
+            if (userDetails == null)
                 return new ResponseEntity<>(new UserRequest(), HttpStatus.NO_CONTENT);
-
             UserRequest myUser = userService.fromUserToUserRequest(userDetails);
-
             return ResponseEntity.ok(myUser);
         } else
-            throw new ValidationException("Not enough data provided");
+            throw new ValidationException(ExceptionMessage.NOT_ENOUGH_DATA.getValue());
     }
 
     @GetMapping("/Validate")
-    public ResponseEntity<UserDetails> validateToken(@RequestHeader(required = false) String Token) {
-        String UserName = jwtToken.getUsernameFromToken(Token);
-        if (!UserName.isEmpty()) {
-            UserDetails userDetails = userService.loadUserByUsername(UserName);
+    public ResponseEntity<UserDetails> validateToken(@RequestHeader(required = false) String token) {
+        String username = jwtToken.getUsernameFromToken(token);
+        if (!username.isEmpty()) {
+            UserDetails userDetails = userService.loadUserByUsername(username);
             return new ResponseEntity<>(userDetails, HttpStatus.OK);
         } else
-            throw new ValidationException("Not enough data provided");
+            throw new ValidationException(ExceptionMessage.NOT_ENOUGH_DATA.getValue());
     }
 
 
-    @PostMapping("/User/{UserName}/reset")
-    public ResponseEntity<Boolean> sendTemporalToken(@PathVariable String UserName,@RequestParam(required = true) String BackUrl, @RequestHeader(required = true) String Token){
-        if (UserName != null) {
-            User myUser  = userService.findByEmail(UserName);
-
-            if(myUser != null){
-
-                userService.sendRessetPassordEmail(UserName, BackUrl);
-
+    @PostMapping("/User/{userName}/reset")
+    public ResponseEntity<Boolean> sendTemporalToken(@PathVariable String userName,
+                                                     @RequestParam() String backUrl,
+                                                     @RequestHeader() String token) {
+        if (userName != null) {
+            User myUser = userService.findByEmail(userName);
+            if (myUser != null) {
+                userService.sendRessetPasswordEmail(userName, backUrl);
                 return ResponseEntity.ok(true);
             }
             return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
         } else
-            throw new ValidationException("Not enough data provided");
+            throw new ValidationException(ExceptionMessage.NOT_ENOUGH_DATA.getValue());
     }
 
-    // here token is temporal for validation of password reset
-    @GetMapping("/User/{UserName}/validate")
-    public ResponseEntity<Boolean> validateTemporalToken(@PathVariable String UserName, @RequestParam(required = true) String TemporalToken){
-        if (UserName != null) {
-            User myUser  = userService.findByEmail(UserName);
-
-            if(myUser != null && TemporalToken != null && TemporalToken != ""){
-
-                return ResponseEntity.ok(userService.checkTemporalToken(UserName,TemporalToken));
+    @GetMapping("/User/{userName}/validate")
+    public ResponseEntity<Boolean> validateTemporalToken(@PathVariable String userName,
+                                                         @RequestParam() String temporalToken) {
+        if (userName != null) {
+            User myUser = userService.findByEmail(userName);
+            if (myUser != null && StringUtils.isNotEmpty(temporalToken)) {
+                return ResponseEntity.ok(userService.checkTemporalToken(userName, temporalToken));
             }
             return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
         } else
-            throw new ValidationException("Not enough data provided");
+            throw new ValidationException(ExceptionMessage.NOT_ENOUGH_DATA.getValue());
     }
 }

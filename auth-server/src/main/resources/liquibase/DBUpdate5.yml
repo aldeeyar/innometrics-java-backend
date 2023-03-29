@@ -20,7 +20,7 @@ databaseChangeLog:
                   name: email
                   type: Varchar(256)
                   constraints:
-                    foreignKeyName: fk_user_auth_managers
+                    foreignKeyName: fk_user_auth_managers_1
                     references: innometricsauth.user(email)
                     nullable: false
               - column:

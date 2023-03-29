@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -15,28 +14,20 @@ import java.util.Set;
 @Entity
 @Table
 public class Project implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
     private Integer projectID;
-
     @Column
     private String name;
-
-    @Column
-    private String isactive;
-
+    @Column(name = "isactive")
+    private String isActive;
     @Column(name = "creationdate", insertable = false, updatable = false)
-    private Date creationdate;
-
+    private Date creationDate;
     @Column(name = "createdby", insertable = false, updatable = false)
-    private String createdby;
-
+    private String createdBy;
     @Column(name = "lastupdate", insertable = false)
-    private Date lastupdate;
-
+    private Date lastUpdate;
     @Column(name = "updateby", insertable = false)
-    private String updateby;
-
+    private String updateBy;
 }

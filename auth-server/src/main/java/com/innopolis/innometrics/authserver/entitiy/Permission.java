@@ -12,17 +12,13 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(Permission_id.class)
+@IdClass(PermissionId.class)
 public class Permission {
-
     @Id
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "page", referencedColumnName = "page")
     private Page page;
-
     @Id
     @Column
     private String role;
-
-
 }

@@ -11,7 +11,7 @@ public class BaseErrorHandler {
 
     @ResponseBody
     @ExceptionHandler(value = ValidationException.class)
-    public ResponseEntity<?> handleException(ValidationException exception) {
+    public ResponseEntity<String> handleException(ValidationException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMsg());
     }
 }

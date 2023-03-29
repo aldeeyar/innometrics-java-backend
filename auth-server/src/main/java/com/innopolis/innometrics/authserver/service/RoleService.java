@@ -1,35 +1,30 @@
 package com.innopolis.innometrics.authserver.service;
 
-import com.innopolis.innometrics.authserver.DTO.*;
+import com.innopolis.innometrics.authserver.dto.*;
 import com.innopolis.innometrics.authserver.entitiy.Page;
 import com.innopolis.innometrics.authserver.entitiy.Permission;
 import com.innopolis.innometrics.authserver.entitiy.Role;
 import com.innopolis.innometrics.authserver.repository.PageRepository;
 import com.innopolis.innometrics.authserver.repository.PermissionRepository;
 import com.innopolis.innometrics.authserver.repository.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class RoleService {
-    @Autowired
-    RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
+    private final PageRepository pageRepository;
+    private final PermissionRepository permissionRepository;
 
-    @Autowired
-    PageRepository pageRepository;
-
-    @Autowired
-    PermissionRepository permissionRepository;
-
-
-
-    public PageListResponse getPagesWithIconsForRole(String role){
+    public PageListResponse getPagesWithIconsForRole(String role) {
         Set<Permission> permissions = roleRepository.findByName(role).getPermissions();
         PageListResponse pages = new PageListResponse();
-
         for (Permission permission : permissions) {
             PageResponse temp = new PageResponse(permission.getPage().getPage(), permission.getPage().getIcon());
             pages.addPageResponse(temp);
@@ -40,18 +35,17 @@ public class RoleService {
     public RoleResponse getRole(String roleName){
         Role role = roleRepository.findByName(roleName);
         if(role!=null){
-            return RoleResponseFromRole(role);
+            return roleResponseFromRole(role);
         }
         return null;
     }
 
     public RoleListResponse getRoles(){
         List<Role> roles = roleRepository.findAll();
-
         if(!roles.isEmpty()){
             RoleListResponse roleResponseList = new RoleListResponse();
             for (Role role : roles) {
-                roleResponseList.addRoleResponse(RoleResponseFromRole(role));
+                roleResponseList.addRoleResponse(roleResponseFromRole(role));
             }
             return roleResponseList;
         }
@@ -59,106 +53,41 @@ public class RoleService {
     }
 
 
-    public RoleResponse createRole(RoleRequest roleRequest){
+    public RoleResponse createRole(RoleRequest roleRequest) {
         Role role = new Role();
-
-        role.setName(roleRequest.getName());
-        role.setCreatedby(roleRequest.getCreatedby());
-        role.setCreationdate(roleRequest.getCreationdate());
-        role.setDescription(roleRequest.getDescription());
-        role.setIsactive(roleRequest.getIsactive());
-        role.setLastupdate(roleRequest.getLastupdate());
-        role.setUpdateby(roleRequest.getUpdateby());
-
+        roleMapping(role, roleRequest);
         roleRepository.save(role);
-
-        List<PageRequest> pages = roleRequest.getPages();
-
-        Set<Permission> permissions = new HashSet<Permission>();
-        for (PageRequest pageRequest : pages) {
+        List<PageResponse> pages = roleRequest.getPages();
+        Set<Permission> permissions = new HashSet<>();
+        for (PageResponse pageRequest : pages) {
             Page page = pageRepository.findByPage(pageRequest.getPage());
             Permission permission = permissionRepository.findByPageAndRole(page, roleRequest.getName());
-            if (page != null){
-                if(permission == null){
+            if (page != null) {
+                if (permission == null) {
                     permission = new Permission(page, roleRequest.getName());
                     permission = permissionRepository.save(permission);
                 }
             } else {
-                page = new Page(pageRequest.getPage(),pageRequest.getIcon());
+                page = new Page(pageRequest.getPage(), pageRequest.getIcon());
                 page = pageRepository.save(page);
                 permission = new Permission(page, roleRequest.getName());
                 permission = permissionRepository.save(permission);
-
             }
-
             permissions.add(permission);
         }
-
         role.setPermissions(permissions);
-
         role = roleRepository.save(role);
-
-        return RoleResponseFromRole(role);
+        return roleResponseFromRole(role);
     }
 
     @Transactional
-    public RoleResponse updateRole(RoleRequest roleRequest){
+    public RoleResponse updateRole(RoleRequest roleRequest) {
         Role role = roleRepository.findByName(roleRequest.getName());
-
-        role.setName(roleRequest.getName());
-        role.setCreatedby(roleRequest.getCreatedby());
-        role.setCreationdate(roleRequest.getCreationdate());
-        role.setDescription(roleRequest.getDescription());
-        role.setIsactive(roleRequest.getIsactive());
-        role.setLastupdate(roleRequest.getLastupdate());
-        role.setUpdateby(roleRequest.getUpdateby());
-
-
-
-        // delete previous
-//        Set<Permission> permissionSet = roleRepository.findByName(roleRequest.getName()).getPermissions();
-//        for (Permission permission : permissionSet) {
-//            Page page = permission.getPage();
-//            permissionRepository.findAllByPage();
-//            permissionRepository.delete(permission);
-//        }
-
-//        List<PageRequest> pages = roleRequest.getPages();
-//        Set<Permission> permissions = new HashSet<Permission>();
-//        for (PageRequest pageRequest : pages) {
-//            Page page = pageRepository.findByPage(pageRequest.getPage());
-//            Permission permission;
-//            if (page != null) {
-//                permission = permissionRepository.findByPageAndRole(page,roleRequest.getName());
-//                if(permission==null){
-//                    permission = new Permission(page, roleRequest.getName());
-//                    permissionRepository.save(permission);
-//                }
-//
-//            } else {
-//                page = new Page(pageRequest.getPage(), pageRequest.getIcon());
-//                permission = new Permission(page, roleRequest.getName());
-//                permissionRepository.save(permission);
-//                pageRepository.save(page);
-//            }
-//
-//            permissions.add(permission);
-//        }
-
-        //        //delete previous
-//        List<Permission> allPermissionsForRoleWithLast = permissionRepository.findAllByRole(roleRequest.getName());
-//        if(allPermissionsForRoleWithLast.size() > pages.size()){
-//            for (Permission permission : allPermissionsForRoleWithLast) {
-//                if(pages.contains())
-//            }
-//        }
-
+        roleMapping(role, roleRequest);
         permissionRepository.deleteAllByRole(roleRequest.getName());
-
-
-        List<PageRequest> pages = roleRequest.getPages();
-        Set<Permission> permissions = new HashSet<Permission>();
-        for (PageRequest pageRequest : pages) {
+        List<PageResponse> pages = roleRequest.getPages();
+        Set<Permission> permissions = new HashSet<>();
+        for (PageResponse pageRequest : pages) {
             Page page = pageRepository.findByPage(pageRequest.getPage());
             Permission permission;
             if (page != null) {
@@ -170,95 +99,43 @@ public class RoleService {
                 permissionRepository.save(permission);
                 pageRepository.save(page);
             }
-
             permissions.add(permission);
         }
-
         role.setPermissions(permissions);
-
         role = roleRepository.save(role);
-
-        return RoleResponseFromRole(role);
+        return roleResponseFromRole(role);
     }
 
 
-    private RoleResponse RoleResponseFromRole(Role role){
+    private RoleResponse roleResponseFromRole(Role role) {
         RoleResponse roleResponse = new RoleResponse();
-
         roleResponse.setName(role.getName());
-        roleResponse.setCreatedby(role.getCreatedby());
-        roleResponse.setCreationdate(role.getCreationdate());
+        roleResponse.setCreatedBy(role.getCreatedBy());
+        roleResponse.setCreationDate(role.getCreationDate());
         roleResponse.setDescription(role.getDescription());
-        roleResponse.setIsactive(role.getIsactive());
-        roleResponse.setLastupdate(role.getLastupdate());
-        roleResponse.setUpdateby(role.getUpdateby());
-
+        roleResponse.setIsActive(role.getIsActive());
+        roleResponse.setLastUpdate(role.getLastUpdate());
+        roleResponse.setUpdateBy(role.getUpdateBy());
         PageListResponse pages = new PageListResponse();
-
         for (Permission permission : role.getPermissions()) {
             PageResponse temp = new PageResponse(permission.getPage().getPage(), permission.getPage().getIcon());
             pages.addPageResponse(temp);
         }
-
         roleResponse.setPages(pages);
-
         return roleResponse;
     }
 
-    private Role RoleFromRoleRequest(RoleRequest roleRequest){
-        Role role = new Role();
-
-        role.setName(roleRequest.getName());
-        role.setCreatedby(roleRequest.getCreatedby());
-        role.setCreationdate(roleRequest.getCreationdate());
-        role.setDescription(roleRequest.getDescription());
-        role.setIsactive(roleRequest.getIsactive());
-        role.setLastupdate(roleRequest.getLastupdate());
-        role.setUpdateby(roleRequest.getUpdateby());
-
-        roleRepository.save(role);
-
-        List<PageRequest> pages = roleRequest.getPages();
-
-        Set<Permission> permissions = new HashSet<Permission>();
-        for (PageRequest pageRequest : pages) {
-            Page page = pageRepository.findByPage(pageRequest.getPage());
-            Permission permission;
-            if (page != null){
-                permission = permissionRepository.findByPageAndRole(page, roleRequest.getName());
-                if(permission!=null){
-                    permissions.add(permission);
-                } else {
-                    permission = new Permission(page, roleRequest.getName());
-                    permissionRepository.save(permission);
-                }
-            } else {
-                page = new Page(pageRequest.getPage(),pageRequest.getIcon());
-                permission = new Permission(page, roleRequest.getName());
-                permissionRepository.save(permission);
-                pageRepository.save(page);
-            }
-
-            permissions.add(permission);
-        }
-
-        role.setPermissions(permissions);
-        return role;
-    }
-
-    public Role findByName(String roleName){
+    public Role findByName(String roleName) {
         return roleRepository.findByName(roleName);
     }
 
     public PermissionResponse createPermissions(PermissionResponse permissionResponse){
-        PermissionResponse permissionResponseOut  = new PermissionResponse();
-
+        PermissionResponse permissionResponseOut = new PermissionResponse();
         if(roleRepository.findByName(permissionResponse.getRole()) != null){
             permissionResponseOut.setRole(permissionResponse.getRole());
             List<Page> pages = permissionResponse.getPages();
             for (Page page : pages) {
                 if(pageRepository.findByPage(page.getPage()) != null){
-
                     if(permissionRepository.findByPageAndRole(page,permissionResponse.getRole()) == null){
                         Permission permission = new Permission(page, permissionResponse.getRole());
                         permission = permissionRepository.save(permission);
@@ -280,7 +157,16 @@ public class RoleService {
             }
             return permissionResponseOut;
         }
+        return null;
+    }
 
-       return null;
+    private void roleMapping(Role role, RoleRequest roleRequest) {
+        role.setName(roleRequest.getName());
+        role.setCreatedBy(roleRequest.getCreatedBy());
+        role.setCreationDate(roleRequest.getCreationDate());
+        role.setDescription(roleRequest.getDescription());
+        role.setIsActive(roleRequest.getIsActive());
+        role.setLastUpdate(roleRequest.getLastUpdate());
+        role.setUpdateBy(roleRequest.getUpdateBy());
     }
 }

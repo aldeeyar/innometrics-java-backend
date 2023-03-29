@@ -9,11 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
-    Project findByName(String Name);
-
     Project findByProjectID(Integer projectID);
-
-    Boolean existsByName(String Name);
 
     Boolean existsByProjectID(Integer projectID);
 
