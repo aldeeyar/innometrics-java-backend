@@ -24,7 +24,7 @@ public class Company implements Serializable {
     private String isActive;
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationDate;
-    @Column(name = "createdby", insertable = false, updatable = false)
+    @Column(name = "createdby", updatable = false)
     private String createdBy;
     @Column(name = "lastupdate", insertable = false)
     private Date lastUpdate;
