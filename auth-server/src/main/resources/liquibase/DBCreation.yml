@@ -155,7 +155,6 @@ databaseChangeLog:
                   name: createdby
                   type: Varchar(25)
                   constraints:
-                    nullable: false
               - column:
                   name: lastupdate
                   type: Date

@@ -109,15 +109,15 @@ databaseChangeLog:
                   name: teamid
                   type: Integer
                   constraints:
-                    foreignKeyName: fk_team
-                    references: innometricsauth.teams(teamid)
+#                    foreignKeyName: fk_team
+#                    references: innometricsauth.teams(teamid)
                     nullable: false
               - column:
                   name: email
                   type: Varchar(256)
                   constraints:
-                    foreignKeyName: fk_user_team
-                    references: innometricsauth.user(email)
+#                    foreignKeyName: fk_user_team
+#                    references: innometricsauth.user(email)
                     nullable: false
               - column:
                   name: isactive
@@ -135,7 +135,6 @@ databaseChangeLog:
                   name: createdby
                   type: Varchar(25)
                   constraints:
-                    nullable: false
               - column:
                   name: lastupdate
                   type: Date

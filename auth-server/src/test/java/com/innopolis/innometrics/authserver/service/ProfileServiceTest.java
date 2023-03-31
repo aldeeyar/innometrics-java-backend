@@ -81,7 +81,7 @@ class ProfileServiceTest {
     }
 
     @Test
-    void delete() {
+    void deletePositive() {
         profileRepository.save(createProfile());
         service.delete(1);
         assertEquals(0, profileRepository.findAll().size());
