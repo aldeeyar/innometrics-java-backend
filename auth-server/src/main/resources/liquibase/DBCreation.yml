@@ -71,9 +71,9 @@ databaseChangeLog:
               - column:
                   name: name
                   type: Varchar(256)
-                  constraints:
-                    primaryKey: true
-                    primaryKeyName: role_auth_pk
+              #                  constraints:
+              #                    primaryKey: true
+              #                    primaryKeyName: role_auth_pk
               - column:
                   name: description
                   type: Varchar(1024)

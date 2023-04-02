@@ -62,7 +62,6 @@ public class UserService implements UserDetailsService {
     }
 
     public UserListResponse getActiveUsers(String request) {
-
         request = Objects.equals(request, "") ? null : request;
         List<User> result = userRepository.findAllActive(request);
         UserListResponse response = new UserListResponse();
@@ -168,11 +167,11 @@ public class UserService implements UserDetailsService {
     public boolean checkTemporalToken(String email, String tempToken){
         TemporalToken temporalToken = temporalTokenRepository.findByEmailAndTemporalToken(email,tempToken);
         Timestamp dateNow = new Timestamp(System.currentTimeMillis());
-        if(temporalToken!=null && temporalToken.getExpirationDate().after(dateNow)){
+        if (temporalToken != null && temporalToken.getExpirationDate().after(dateNow)) {
             temporalTokenRepository.delete(temporalToken);
             return true;
         } else {
-            if(temporalToken!=null)
+            if (temporalToken != null)
                 temporalTokenRepository.delete(temporalToken);
             return false;
         }

@@ -34,7 +34,7 @@ public class RoleService {
 
     public RoleResponse getRole(String roleName){
         Role role = roleRepository.findByName(roleName);
-        if(role!=null){
+        if (role != null) {
             return roleResponseFromRole(role);
         }
         return null;
@@ -42,7 +42,7 @@ public class RoleService {
 
     public RoleListResponse getRoles(){
         List<Role> roles = roleRepository.findAll();
-        if(!roles.isEmpty()){
+        if (!roles.isEmpty()) {
             RoleListResponse roleResponseList = new RoleListResponse();
             for (Role role : roles) {
                 roleResponseList.addRoleResponse(roleResponseFromRole(role));

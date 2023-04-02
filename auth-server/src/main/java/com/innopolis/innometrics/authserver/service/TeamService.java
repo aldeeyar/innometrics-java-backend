@@ -6,17 +6,14 @@ import com.innopolis.innometrics.authserver.entitiy.Team;
 import com.innopolis.innometrics.authserver.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static com.innopolis.innometrics.authserver.constants.ExceptionMessage.NO_TEAM_BY_ID_FOUND;
 import static com.innopolis.innometrics.authserver.constants.ExceptionMessage.NO_TEAM_IN_PROJECT_FOUND;
+import static com.innopolis.innometrics.authserver.service.PropertyNames.getNullPropertyNames;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 @Service
@@ -43,7 +40,6 @@ public class TeamService {
         BeanUtils.copyProperties(detail, entity, getNullPropertyNames(detail));
         entity = teamRepository.saveAndFlush(entity);
         BeanUtils.copyProperties(entity, detail);
-
         return detail;
     }
 
@@ -65,14 +61,12 @@ public class TeamService {
         List<Team> teamsFromCompany = teamRepository.findAllByCompanyId(companyId);
         assertNotNull(teamsFromCompany, "No teams found in this company " + companyId);
         return convertFromList(teamsFromCompany);
-
     }
 
     public TeamListRequest findTeamsByProjectId(Integer projectId) {
         List<Team> teamsFromProject = teamRepository.findAllByProjectID(projectId);
         assertNotNull(teamsFromProject, NO_TEAM_IN_PROJECT_FOUND.getValue() + projectId);
         return convertFromList(teamsFromProject);
-
     }
 
     public TeamListRequest findTeamsByProjectIdAndCompanyId(Integer projectId, Integer companyid) {
@@ -89,7 +83,6 @@ public class TeamService {
             assertNotNull(team, NO_TEAM_BY_ID_FOUND.getValue() + teamId);
             if (companyId != null) {
                 if (projectId != null) {
-                    // all 3
                     if (team.getCompanyId().equals(companyId) && team.getProjectID().equals(projectId))
                         returnList.addTeamRequest(team);
                 } else {
@@ -105,9 +98,9 @@ public class TeamService {
                 }
             }
         } else {
-            if(companyId != null){
-                if(projectId != null){
-                    returnList = findTeamsByProjectIdAndCompanyId(projectId,companyId);
+            if (companyId != null) {
+                if (projectId != null) {
+                    returnList = findTeamsByProjectIdAndCompanyId(projectId, companyId);
                 } else {
                     returnList = findTeamsByCompanyId(companyId);
                 }
@@ -123,7 +116,6 @@ public class TeamService {
         assertNotNull(activeTeams,
                 "No active teams found " );
         return convertFromList(activeTeams);
-
     }
 
     public TeamListRequest findAllTeams(){
@@ -141,18 +133,5 @@ public class TeamService {
             teamListRequest.addTeamRequest(detail);
         }
         return teamListRequest;
-    }
-
-
-    private String[] getNullPropertyNames(Object source) {
-        final BeanWrapper src = new BeanWrapperImpl(source);
-        Set<String> emptyNames = new HashSet<>();
-        for(java.beans.PropertyDescriptor descriptor : src.getPropertyDescriptors()) {
-            if (src.getPropertyValue(descriptor.getName()) == null) {
-                emptyNames.add(descriptor.getName());
-            }
-        }
-        String[] result = new String[emptyNames.size()];
-        return emptyNames.toArray(result);
     }
 }

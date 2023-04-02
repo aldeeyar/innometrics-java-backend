@@ -33,13 +33,13 @@ class TeammembersServiceTest {
     TeammembersRepository teammembersRepository;
 
     @Test
-    void existsByProjectIDNegative() {
+    void existsByIDNegative() {
         boolean result = service.existsById(1);
         assertFalse(result);
     }
 
     @Test
-    void existsByProjectIDPositive() {
+    void existsByIDPositive() {
         teammembersRepository.save(createTeammembers());
         boolean result = service.existsById(1);
         assertTrue(result);
@@ -69,7 +69,7 @@ class TeammembersServiceTest {
     }
 
     @Test
-    void create() {
+    void createTest() {
         service.create(createTeammembersRequest());
         assertEquals(1, teammembersRepository.findAll().size());
     }
