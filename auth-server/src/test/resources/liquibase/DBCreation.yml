@@ -53,7 +53,6 @@ databaseChangeLog:
                   type: Varchar(25)
                   constraints:
                     nullable: false
-                  defaultValue: USER
               - column:
                   name: lastupdate
                   type: Date
@@ -72,9 +71,9 @@ databaseChangeLog:
               - column:
                   name: name
                   type: Varchar(256)
-                  constraints:
-                    primaryKey: true
-                    primaryKeyName: role_auth_pk
+              #                  constraints:
+              #                    primaryKey: true
+              #                    primaryKeyName: role_auth_pk
               - column:
                   name: description
                   type: Varchar(1024)
@@ -97,7 +96,6 @@ databaseChangeLog:
                   type: Varchar(25)
                   constraints:
                     nullable: false
-                  defaultValue: USER
               - column:
                   name: lastupdate
                   type: Date
@@ -157,8 +155,6 @@ databaseChangeLog:
                   name: createdby
                   type: Varchar(25)
                   constraints:
-                    nullable: false
-                  defaultValue: USER
               - column:
                   name: lastupdate
                   type: Date

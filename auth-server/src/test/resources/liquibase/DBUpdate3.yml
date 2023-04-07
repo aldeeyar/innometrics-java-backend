@@ -12,20 +12,20 @@ databaseChangeLog:
               - column:
                   name: page
                   type: Varchar(256)
-                  constraints:
-                    primaryKey: true
-                    primaryKeyName: permissions_pk
-                    foreignKeyName: fk_page
+              #                  constraints:
+              #                    primaryKey: true
+              #                    primaryKeyName: permissions_pk
+              #                    foreignKeyName: fk_page
               - column:
                   name: role
                   type: Varchar(256)
                   defaultValue: "DEVELOPER"
-                  constraints:
-                    references: innometricsauth.role(name)
-                    primaryKey: true
-                    primaryKeyName: permissions_pk
-                    foreignKeyName: fk_name
-                    nullable: false
+  #                  constraints:
+  #                    references: innometricsauth.role(name)
+  #                    primaryKey: true
+  #                    primaryKeyName: permissions_pk
+  #                    foreignKeyName: fk_name
+  #                    nullable: false
 
   - changeSet:
       id: "add table pages"
@@ -47,4 +47,5 @@ databaseChangeLog:
               - column:
                   name: icon
                   type: Varchar(256)
+
 

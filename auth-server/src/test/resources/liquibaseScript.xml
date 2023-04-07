@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <include file="liquibase/DBCreation.yml"/>
+    <include file="liquibase/DBUpdate.yml"/>
+    <include file="liquibase/DBUpdate2.yml"/>
+    <include file="liquibase/DBUpdate3.yml"/>
+    <include file="liquibase/DBUpdate4.yml"/>
+    <include file="liquibase/DBUpdate5.yml"/>
+    <include file="liquibase/DBUpdate6.yml"/>
+    <include file="liquibase/DBUpdate7.yml"/>
+</databaseChangeLog>
