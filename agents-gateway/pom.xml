@@ -153,6 +153,7 @@
                         </formats>
                         <excludes>
                             <exclude>com/innopolis/innometrics/agentsgateway/entity</exclude>
+                            <exclude>com/innopolis/innometrics/agentsgateway/dto</exclude>
                         </excludes>
                     </configuration>
                     </execution>
