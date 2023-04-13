@@ -148,6 +148,7 @@
                         <excludes>
                             <exclude>com/innopolis/innometrics/restapi/entity</exclude>
                             <exclude>com/innopolis/innometrics/restapi/dto</exclude>
+                            <exclude>com/innopolis/innometrics/restapi/constants</exclude>
                         </excludes>
                     </configuration>
                     </execution>
