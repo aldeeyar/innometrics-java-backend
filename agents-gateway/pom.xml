@@ -154,6 +154,7 @@
                         <excludes>
                             <exclude>com/innopolis/innometrics/agentsgateway/entity</exclude>
                             <exclude>com/innopolis/innometrics/agentsgateway/dto</exclude>
+                            <exclude>com/innopolis/innometrics/agentsgateway/constants</exclude>
                         </excludes>
                     </configuration>
                     </execution>
