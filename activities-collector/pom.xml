@@ -149,6 +149,7 @@
                         <excludes>
                             <exclude>com/innopolis/innometrics/activitiescollector/entity</exclude>
                             <exclude>com/innopolis/innometrics/activitiescollector/dto</exclude>
+                            <exclude>com/innopolis/innometrics/activitiescollector/constants</exclude>
                         </excludes>
                     </configuration>
                     </execution>
