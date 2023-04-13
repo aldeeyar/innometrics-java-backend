@@ -3,8 +3,7 @@ name: Publish Docker image
 on: 
   push:
     branches:
-      - 'main'
-      - 'ci'
+      - 'master'
 
 jobs:
   push_to_registry:
