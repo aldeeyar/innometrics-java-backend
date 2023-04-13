@@ -146,8 +146,8 @@
                         <format>XML</format>
                         </formats>
                         <excludes>
-                            <exclude>com/innopolis/innometrics/agentsgateway/entity</exclude>
-                            <exclude>com/innopolis/innometrics/agentsgateway/dto</exclude>
+                            <exclude>com/innopolis/innometrics/restapi/entity</exclude>
+                            <exclude>com/innopolis/innometrics/restapi/dto</exclude>
                         </excludes>
                     </configuration>
                     </execution>
