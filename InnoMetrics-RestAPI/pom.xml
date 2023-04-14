@@ -18,9 +18,6 @@
         <java.version>1.8</java.version>
         <sonar.organization>aldeeyar</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.coverage.exclusions> <!-- the members of the following list should be in the same line -->
-            com/innopolis/innometrics/restapi/entity/*.java,com/innopolis/innometrics/restapi/dto/*.java
-        </sonar.coverage.exclusions>
         <!--spring-cloud.version>Hoxton.RC2</spring-cloud.version-->
     </properties>
 
@@ -148,11 +145,11 @@
                         <formats>
                         <format>XML</format>
                         </formats>
-<!--                        <excludes>-->
-<!--                            <exclude>com/innopolis/innometrics/restapi/entity/*</exclude>-->
-<!--                            <exclude>com/innopolis/innometrics/restapi/dto/*</exclude>-->
-<!--                            <exclude>com/innopolis/innometrics/restapi/constants/*</exclude>-->
-<!--                        </excludes>-->
+                        <excludes>
+                            <exclude>com/innopolis/innometrics/restapi/entity/*</exclude>
+                            <exclude>com/innopolis/innometrics/restapi/dto/*</exclude>
+                            <exclude>com/innopolis/innometrics/restapi/constants/*</exclude>
+                        </excludes>
                     </configuration>
                     </execution>
                 </executions>
