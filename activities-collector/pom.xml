@@ -19,6 +19,9 @@
         <spring-cloud.version>Hoxton.SR1</spring-cloud.version>
         <sonar.organization>aldeeyar</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.exclusions> <!-- the members of the following list should be in the same line -->
+            **/activitiescollector/entity/*.java,**/activitiescollector/dto/*.java,**/activitiescollector/constants/*.java
+        </sonar.coverage.exclusions>
     </properties>
 
     <dependencies>
@@ -147,9 +150,9 @@
                         <format>XML</format>
                         </formats>
                         <excludes>
-                            <exclude>com/innopolis/innometrics/activitiescollector/entity</exclude>
-                            <exclude>com/innopolis/innometrics/activitiescollector/dto</exclude>
-                            <exclude>com/innopolis/innometrics/activitiescollector/constants</exclude>
+                            <exclude>**/activitiescollector/entity/*.java</exclude>
+                            <exclude>**/activitiescollector/dto/*.java</exclude>
+                            <exclude>**/activitiescollector/constants/*.java</exclude>
                         </excludes>
                     </configuration>
                     </execution>
