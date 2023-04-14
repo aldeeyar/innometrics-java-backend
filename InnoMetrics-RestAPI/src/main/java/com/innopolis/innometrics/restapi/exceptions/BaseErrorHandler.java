@@ -8,10 +8,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @ControllerAdvice
 public class BaseErrorHandler {
-
-    /**
-     * Source: <a href="https://dev.to/cuongld2/create-apis-with-jwt-authorization-using-spring-boot-24f9">...</a>
-     */
     @ResponseBody
     @ExceptionHandler(value = ValidationException.class)
     public ResponseEntity<String> handleException(ValidationException exception) {
