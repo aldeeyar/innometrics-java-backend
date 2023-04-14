@@ -19,9 +19,8 @@
         <sonar.organization>aldeeyar</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.exclusions> <!-- the members of the following list should be in the same line -->
-            **/restapi/entity/*.java,**/restapi/dto/*.java,**/restapi/constants/*.java,**/restapi/exceptions/*.java
+            **/restapi/entity/*.java,**/restapi/dto/*.java,**/restapi/constants/*.java
         </sonar.coverage.exclusions>
-        <!--spring-cloud.version>Hoxton.RC2</spring-cloud.version-->
     </properties>
 
     <dependencies>
@@ -152,7 +151,6 @@
                             <exclude>**/restapi/entity/*.java</exclude>
                             <exclude>**/restapi/dto/*.java</exclude>
                             <exclude>**/restapi/constants/*.java</exclude>
-                            <exclude>**/restapi/exceptions/*.java</exclude>
                         </excludes>
                     </configuration>
                     </execution>
