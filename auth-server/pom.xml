@@ -20,7 +20,7 @@
         <sonar.organization>aldeeyar</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.exclusions> <!-- the members of the following list should be in the same line -->
-            **/authserver/constants/RequestConstants.java,**/authserver/dto/User*.java
+            **/authserver/constants/RequestConstants.java,**/authserver/dto/User*.java,**/authserver/dto/WorkingTree*.java
         </sonar.coverage.exclusions>
     </properties>
 
@@ -168,6 +168,7 @@
                         <excludes>
                             <exclude>**/authserver/dto/User*.java</exclude>
                             <exclude>**/authserver/constants/RequestConstants.java</exclude>
+                            <exclude>**/authserver/dto/WorkingTree*.java</exclude>
                         </excludes>
                     </configuration>
                     </execution>
