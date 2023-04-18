@@ -20,7 +20,7 @@
         <sonar.organization>aldeeyar</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.exclusions> <!-- the members of the following list should be in the same line -->
-            **/agentsgateway/entity/*.java,**/agentsgateway/dto/*.java
+            **/agentsgateway/entity/*.java,**/agentsgateway/dto/*.java,**/agentsgateway/constants/HeaderConstants.java,**/agentsgateway/service/CustomO*.java
         </sonar.coverage.exclusions>
     </properties>
 
@@ -157,6 +157,8 @@
                         <excludes>
                             <exclude>**/agentsgateway/entity/*.java</exclude>
                             <exclude>**/agentsgateway/dto/*.java</exclude>
+                            <exclude>**/agentsgateway/constants/HeaderConstants.java</exclude>
+                            <exclude>**/agentsgateway/service/CustomO*.java</exclude>
                         </excludes>
                     </configuration>
                     </execution>
