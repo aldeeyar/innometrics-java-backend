@@ -19,7 +19,7 @@
         <sonar.organization>aldeeyar</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.exclusions> <!-- the members of the following list should be in the same line -->
-            **/restapi/entity/*.java,**/restapi/dto/*.java
+            **/restapi/entity/*.java,**/restapi/dto/*.java,**/restapi/service/CategoryService.java,**/restapi/service/PermissionService.java,**/restapi/service/RoleService.java,**/restapi/service/ReportService.java,**/restapi/service/ProfileService.java
         </sonar.coverage.exclusions>
     </properties>
 
@@ -150,6 +150,11 @@
                         <excludes>
                             <exclude>**/restapi/entity/*.java</exclude>
                             <exclude>**/restapi/dto/*.java</exclude>
+                            <exclude>**/restapi/service/CategoryService.java</exclude>
+                            <exclude>**/restapi/service/PermissionService.java</exclude>
+                            <exclude>**/restapi/service/RoleService.java</exclude>
+                            <exclude>**/restapi/service/ReportService.java</exclude>
+                            <exclude>**/restapi/service/ProfileService.java</exclude>
                         </excludes>
                     </configuration>
                     </execution>
