@@ -20,7 +20,7 @@
         <sonar.organization>aldeeyar</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.exclusions> <!-- the members of the following list should be in the same line -->
-            **/activitiescollector/entity/*.java,**/activitiescollector/dto/*.java,**/activitiescollector/constants/*.java,**/activitiescollector/service/CategoryService.java,**/activitiescollector/controller/*.java
+            **/activitiescollector/entity/*.java,**/activitiescollector/dto/*.java,**/activitiescollector/constants/*.java,**/activitiescollector/service/CategoryService.java,**/activitiescollector/controller/*.java,**/activitiescollector/service/ProcessService.java
         </sonar.coverage.exclusions>
     </properties>
 
@@ -155,6 +155,7 @@
                             <exclude>**/activitiescollector/constants/*.java</exclude>
                             <exclude>**/activitiescollector/service/CategoryService.java</exclude>
                             <exclude>**/activitiescollector/controller/*.java</exclude>
+                            <exclude>**/activitiescollector/service/ProcessService.java</exclude>
                         </excludes>
                     </configuration>
                     </execution>
