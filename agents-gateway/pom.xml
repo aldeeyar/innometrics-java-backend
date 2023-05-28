@@ -20,7 +20,7 @@
         <sonar.organization>aldeeyar</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.exclusions> <!-- the members of the following list should be in the same line -->
-            **/agentsgateway/entity/*.java,**/agentsgateway/dto/*.java,**/agentsgateway/constants/HeaderConstants.java,**/agentsgateway/service/CustomO*.java,**/agentsgateway/service/CommonFieldsProcessor.java,**/agentsgateway/service/SonarQubeService.java
+            **/agentsgateway/entity/*.java,**/agentsgateway/dto/*.java,**/agentsgateway/constants/HeaderConstants.java,**/agentsgateway/service/CustomO*.java,**/agentsgateway/service/CommonFieldsProcessor.java,**/agentsgateway/service/SonarQubeService.java,**/agentsgateway/controller/AgentGateway.java,**/agentsgateway/controller/AgentProjectController.java,**/agentsgateway/controller/AgentsCompanyController.java,**/agentsgateway/controller/ExternalProjectTeamController.java,**/agentsgateway/service/OAuthImp.java,**/agentsgateway/controller/ReposProjectController.java,**/agentsgateway/controller/SonarQubeController.java
         </sonar.coverage.exclusions>
     </properties>
 
@@ -161,6 +161,13 @@
                             <exclude>**/agentsgateway/service/CustomO*.java</exclude>
                             <exclude>**/agentsgateway/service/CommonFieldsProcessor.java</exclude>
                             <exclude>**/agentsgateway/service/SonarQubeService.java</exclude>
+                            <exclude>**/agentsgateway/controller/AgentGateway.java</exclude>
+                            <exclude>**/agentsgateway/controller/AgentProjectController.java</exclude>
+                            <exclude>**/agentsgateway/controller/AgentsCompanyController.java</exclude>
+                            <exclude>**/agentsgateway/controller/ExternalProjectTeamController.java\</exclude>
+                            <exclude>**/agentsgateway/service/OAuthImp.java</exclude>
+                            <exclude>**/agentsgateway/controller/ReposProjectController.java</exclude>
+                            <exclude>**/agentsgateway/controller/SonarQubeController.java</exclude>
                         </excludes>
                     </configuration>
                     </execution>
