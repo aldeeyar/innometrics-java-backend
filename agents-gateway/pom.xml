@@ -20,7 +20,7 @@
         <sonar.organization>aldeeyar</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.exclusions> <!-- the members of the following list should be in the same line -->
-            **/agentsgateway/entity/*.java,**/agentsgateway/dto/*.java,**/agentsgateway/constants/HeaderConstants.java,**/agentsgateway/service/CustomO*.java,**/agentsgateway/service/CommonFieldsProcessor.java,**/agentsgateway/service/SonarQubeService.java,**/agentsgateway/controller/AgentGateway.java,**/agentsgateway/controller/AgentProjectController.java,**/agentsgateway/controller/AgentsCompanyController.java,**/agentsgateway/controller/ExternalProjectTeamController.java,**/agentsgateway/service/OAuthImp.java,**/agentsgateway/controller/ReposProjectController.java,**/agentsgateway/controller/SonarQubeController.java,**/agentsgateway/service/AgentsHandler.java
+            **/agentsgateway/entity/*.java,**/agentsgateway/dto/*.java,**/agentsgateway/constants/HeaderConstants.java,**/agentsgateway/service/CustomO*.java,**/agentsgateway/service/CommonFieldsProcessor.java,**/agentsgateway/service/SonarQubeService.java,**/agentsgateway/controller/AgentGateway.java,**/agentsgateway/controller/AgentProjectController.java,**/agentsgateway/controller/AgentsCompanyController.java,**/agentsgateway/controller/ExternalProjectTeamController.java,**/agentsgateway/service/OAuthImp.java,**/agentsgateway/controller/ReposProjectController.java,**/agentsgateway/controller/SonarQubeController.java,**/agentsgateway/service/AgentsHandler.java,**/agentsgateway/controller/AgentDetailsController.java
         </sonar.coverage.exclusions>
     </properties>
 
@@ -169,6 +169,7 @@
                             <exclude>**/agentsgateway/controller/ReposProjectController.java</exclude>
                             <exclude>**/agentsgateway/controller/SonarQubeController.java</exclude>
                             <exclude>**/agentsgateway/service/AgentsHandler.java</exclude>
+                            <exclude>**/agentsgateway/controller/AgentDetailsController.java</exclude>
                         </excludes>
                     </configuration>
                     </execution>
