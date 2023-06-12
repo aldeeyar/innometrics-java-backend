@@ -3,7 +3,7 @@ databaseChangeLog:
       id: SchemaCreation_innometricscnf_
       author: xvasquez
       changes:
-      - sql: "CREATE SCHEMA innometricsconfig;"
+        - sql: "CREATE SCHEMA innometricsconfig;"
   - changeSet:
       id: configtablecreation
       author: xvasquez

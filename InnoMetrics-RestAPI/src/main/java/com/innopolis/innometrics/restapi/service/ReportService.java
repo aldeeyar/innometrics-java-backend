@@ -1,15 +1,17 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.ActivitiesReportByUserResponse;
-import com.innopolis.innometrics.restapi.DTO.CumulativeReportResponse;
-import com.innopolis.innometrics.restapi.DTO.CurrentActivityReport;
-import com.innopolis.innometrics.restapi.DTO.TimeReportResponse;
+import com.innopolis.innometrics.restapi.constants.RequestConstants;
+import com.innopolis.innometrics.restapi.dto.ActivitiesReportByUserResponse;
+import com.innopolis.innometrics.restapi.dto.CumulativeReportResponse;
+import com.innopolis.innometrics.restapi.dto.CurrentActivityReport;
+import com.innopolis.innometrics.restapi.dto.TimeReportResponse;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,118 +20,63 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.innopolis.innometrics.restapi.constants.RequestConstants.DATE_PATTERN;
+
 @Service
+@RequiredArgsConstructor
 public class ReportService {
-
-    private static Logger LOG = LogManager.getLogger();
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    private String baseURL = "http://INNOMETRICS-COLLECTOR-SERVER/V1/Reports";
+    private static final String BASE_URL = "http://INNOMETRICS-COLLECTOR-SERVER/V1/Reports";
+    private final RestTemplate restTemplate;
 
     @HystrixCommand(commandKey = "getReportActivities", fallbackMethod = "getReportActivitiesFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public ActivitiesReportByUserResponse getReportActivities(String projectID,
-                                                              String email,
-                                                              Date min_Date,
-                                                              Date max_Date) {
-        String uri = baseURL + "/activitiesReport";
-
-        HttpHeaders headers = new HttpHeaders();
-
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
-        Format formatter = new SimpleDateFormat("dd/MM/yyyy");
+    public ActivitiesReportByUserResponse getReportActivities(String projectID, String email, Date minDate, Date maxDate) {
+        String uri = BASE_URL + "/activitiesReport";
+        Format formatter = new SimpleDateFormat(DATE_PATTERN.getValue());
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("projectid", projectID)
-                .queryParam("email", email)
-                .queryParam("min_Date", min_Date != null ? formatter.format(min_Date) : null)
-                .queryParam("max_Date", max_Date != null ? formatter.format(max_Date) : null);
-        ResponseEntity<ActivitiesReportByUserResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null, ActivitiesReportByUserResponse.class);
-
-        HttpStatus status = response.getStatusCode();
-
+                .queryParam(RequestConstants.EMAIL.name(), email)
+                .queryParam(RequestConstants.MIN_DATE.getValue(), minDate != null ? formatter.format(minDate) : null)
+                .queryParam(RequestConstants.MAX_DATE.getValue(), maxDate != null ? formatter.format(maxDate) : null);
+        ResponseEntity<ActivitiesReportByUserResponse> response = restTemplate
+                .exchange(builder.toUriString(), HttpMethod.GET, null, ActivitiesReportByUserResponse.class);
         return response.getBody();
-
-    }
-
-    public ActivitiesReportByUserResponse getReportActivitiesFallback(String projectID,
-                                                                      String email,
-                                                                      Date min_Date,
-                                                                      Date max_Date, Throwable exception) {
-        LOG.warn("getReportActivitiesFallback method used");
-        LOG.warn(exception);
-        return new ActivitiesReportByUserResponse();
     }
 
     @HystrixCommand(commandKey = "getTimeReport", fallbackMethod = "getTimeReportFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public TimeReportResponse getTimeReport(String projectID,
-                                            String email,
-                                            Date min_Date,
-                                            Date max_Date) {
-        String uri = baseURL + "/timeReport";
-
+    public TimeReportResponse getTimeReport(String projectID, String email, Date minDate, Date maxDate) {
+        String uri = BASE_URL + "/timeReport";
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(headers);
-
-        Format formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Format formatter = new SimpleDateFormat(DATE_PATTERN.getValue());
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("projectid", projectID == null ? "" : projectID)
-                .queryParam("email", email == null ? "" : email)
-                .queryParam("min_Date", min_Date != null ? formatter.format(min_Date) : null)
-                .queryParam("max_Date", max_Date != null ? formatter.format(max_Date) : null);
+                .queryParam(RequestConstants.EMAIL.name(), email == null ? "" : email)
+                .queryParam(RequestConstants.MIN_DATE.getValue(), minDate != null ? formatter.format(minDate) : null)
+                .queryParam(RequestConstants.MAX_DATE.getValue(), maxDate != null ? formatter.format(maxDate) : null);
         ResponseEntity<TimeReportResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, TimeReportResponse.class);
-
-        HttpStatus status = response.getStatusCode();
-
         return response.getBody();
-
-    }
-
-    public TimeReportResponse getTimeReportFallback(String projectID,
-                                                    String email,
-                                                    Date min_Date,
-                                                    Date max_Date, Throwable exception) {
-        LOG.warn("getTimeReportFallback method used");
-        LOG.warn(exception);
-        return new TimeReportResponse();
     }
 
 
     @HystrixCommand(commandKey = "getCumulativeReport", fallbackMethod = "getCumulativeReportFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public CumulativeReportResponse getCumulativeReport(String email,
-                                                        Date min_Date,
-                                                        Date max_Date) {
-        String uri = baseURL + "/cumulativeReport";
-
+    public CumulativeReportResponse getCumulativeReport(String email, Date minDate, Date maxDate) {
+        String uri = BASE_URL + "/cumulativeReport";
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(headers);
-
-        Format formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Format formatter = new SimpleDateFormat(DATE_PATTERN.getValue());
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
-                .queryParam("email", email)
-                .queryParam("min_Date", min_Date != null ? formatter.format(min_Date) : null)
-                .queryParam("max_Date", max_Date != null ? formatter.format(max_Date) : null);
-        ResponseEntity<CumulativeReportResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, CumulativeReportResponse.class);
-
-        HttpStatus status = response.getStatusCode();
-
+                .queryParam(RequestConstants.EMAIL.getValue(), email)
+                .queryParam(RequestConstants.MIN_DATE.getValue(), minDate != null ? formatter.format(minDate) : null)
+                .queryParam(RequestConstants.MAX_DATE.getValue(), maxDate != null ? formatter.format(maxDate) : null);
+        ResponseEntity<CumulativeReportResponse> response = restTemplate
+                .exchange(builder.toUriString(), HttpMethod.GET, entity, CumulativeReportResponse.class);
         return response.getBody();
-
-    }
-
-    public CumulativeReportResponse getCumulativeReportFallback(String email,
-                                                                Date min_Date,
-                                                                Date max_Date, Throwable exception) {
-        LOG.warn("getCumulativeReportFallback method used");
-        LOG.warn(exception);
-        return new CumulativeReportResponse();
     }
 
 
@@ -137,25 +84,13 @@ public class ReportService {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public CurrentActivityReport getExamReport(String email) {
-        String uri = baseURL + "/examReport";
-
+        String uri = BASE_URL + "/examReport";
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(headers);
-
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
-                .queryParam("email", email);
-
-        ResponseEntity<CurrentActivityReport> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, CurrentActivityReport.class);
-
-        HttpStatus status = response.getStatusCode();
-
+                .queryParam(RequestConstants.EMAIL.getValue(), email);
+        ResponseEntity<CurrentActivityReport> response = restTemplate
+                .exchange(builder.toUriString(), HttpMethod.GET, entity, CurrentActivityReport.class);
         return response.getBody();
-
-    }
-
-    public CurrentActivityReport getExamReportFallback(String email, Throwable exception) {
-        LOG.warn("getExamReportFallback method used");
-        LOG.warn(exception);
-        return new CurrentActivityReport();
     }
 }

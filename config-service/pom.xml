@@ -56,6 +56,11 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
             <version>2.9.2</version>
@@ -117,8 +122,12 @@
                     </goals>
                     <configuration>
                         <formats>
-                        <format>XML</format>
+                            <format>XML</format>
                         </formats>
+                        <excludes>
+                            <exclude>com/innopolis/innometrics/configservice/entities</exclude>
+                            <exclude>com/innopolis/innometrics/configservice/dto</exclude>
+                        </excludes>
                     </configuration>
                     </execution>
                 </executions>

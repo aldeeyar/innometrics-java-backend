@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CollectorVersionRepository extends JpaRepository<CollectorVersion, Integer> {
-    CollectorVersion findByOsversion(String osversion);
+    CollectorVersion findByOsVersion(String osVersion);
 }

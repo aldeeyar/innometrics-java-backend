@@ -48,4 +48,3 @@ databaseChangeLog:
                   name: icon
                   type: Varchar(256)
 
-

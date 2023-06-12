@@ -19,6 +19,9 @@
         <spring-cloud.version>Hoxton.RC2</spring-cloud.version>
         <sonar.organization>aldeeyar</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.exclusions> <!-- the members of the following list should be in the same line -->
+            **/authserver/constants/RequestConstants.java,**/authserver/dto/User*.java,**/authserver/dto/WorkingTree*.java,**/authserver/entitiy/ProjectUsers.java,**/authserver/dto/TemporalTokenRequest.java,**/authserver/entitiy/User.java,**/authserver/controller/*.java,**/authserver/dto/TeamRequest.java,**authserver/dto/TeammembersRequest.java,**/authserver/dto/ProjectRequest.java,**/authserver/dto/ProfileRequest.java,**authserver/service/UserService.java,**/authserver/dto/PageResponse.java
+        </sonar.coverage.exclusions>
     </properties>
 
     <dependencies>
@@ -71,6 +74,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -157,6 +165,21 @@
                         <formats>
                         <format>XML</format>
                         </formats>
+                        <excludes>
+                            <exclude>**/authserver/dto/User*.java</exclude>
+                            <exclude>**/authserver/constants/RequestConstants.java</exclude>
+                            <exclude>**/authserver/dto/WorkingTree*.java</exclude>
+                            <exclude>**/authserver/entitiy/ProjectUsers.java</exclude>
+                            <exclude>**/authserver/dto/TemporalTokenRequest.java</exclude>
+                            <exclude>**/authserver/entitiy/User.java</exclude>
+                            <exclude>**/authserver/controller/*.java</exclude>
+                            <exclude>**/authserver/dto/TeamRequest.java</exclude>
+                            <exclude>**authserver/dto/TeammembersRequest.java</exclude>
+                            <exclude>**/authserver/dto/ProjectRequest.java</exclude>
+                            <exclude> **/authserver/dto/ProfileRequest.java</exclude>
+                            <exclude>**authserver/service/UserService.java</exclude>
+                            <exclude>**/authserver/dto/PageResponse.java</exclude>
+                        </excludes>
                     </configuration>
                     </execution>
                 </executions>

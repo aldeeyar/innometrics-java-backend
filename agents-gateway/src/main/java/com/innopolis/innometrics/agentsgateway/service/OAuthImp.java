@@ -1,120 +1,117 @@
 package com.innopolis.innometrics.agentsgateway.service;
 
 import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.model.*;
+import com.github.scribejava.core.builder.api.DefaultApi20;
+import com.github.scribejava.core.model.OAuth1AccessToken;
+import com.github.scribejava.core.model.OAuth1RequestToken;
+import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import com.github.scribejava.core.oauth.OAuth20Service;
-import com.innopolis.innometrics.agentsgateway.entity.Agentconfig;
-import com.innopolis.innometrics.agentsgateway.entity.Agentsxproject;
-import com.innopolis.innometrics.agentsgateway.repository.AgentconfigRepository;
-import com.innopolis.innometrics.agentsgateway.repository.AgentsxprojectRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.innopolis.innometrics.agentsgateway.entity.AgentConfig;
+import com.innopolis.innometrics.agentsgateway.entity.AgentsXProject;
+import com.innopolis.innometrics.agentsgateway.repository.AgentConfigRepository;
+import com.innopolis.innometrics.agentsgateway.repository.AgentsXProjectRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import static com.innopolis.innometrics.agentsgateway.constants.HeaderConstants.INNO_METRICS;
+
 @Service
+@RequiredArgsConstructor
 public class OAuthImp implements OAuthService {
 
+    private static final String OAUTH_1A = "OAuth1a";
+    private static final String OAUTH_20 = "OAuth20";
+    private static final String OAUTH_20J = "OAuth20J";
+    private static final String SIMPLE = "Simple";
+    private static final String AGENT = "?agentid=";
+    private static final String PROJECT = "&projectid=";
+    private static final String CB = "?cb=";
+    private final AgentConfigRepository agentconfigRepository;
+    private final AgentsXProjectRepository agentsxprojectRepository;
     @Value("${innometrics.oauth1a.default-callback}")
-    private String DEFAULT_CALLBACK1a;
+    private String defaultCallback1A;
     @Value("${innometrics.oauth20.default-callback}")
-    private String DEFAULT_CALLBACK20;
+    private String defaultCallback20;
     @Value("${innometrics.oauthSimple.default-callback}")
-    private String DEFAULT_CALLBACKSimple;
-
-    @Autowired
-    AgentconfigRepository agentconfigRepository;
-
-    @Autowired
-    AgentsxprojectRepository agentsxprojectRepository;
+    private String defaultCallbacksimple;
 
     @Override
-    public String getAuthorizationURL(Integer agentid, Integer projectid, String cb) {
-        Agentconfig config = agentconfigRepository.findByAgentid(agentid);
-        switch (config.getAuthenticationmethod()) {
-            case "OAuth1a":
-                return getAuthorizationURL1a(config, projectid, cb);
-            //break;
-            case "OAuth20":
-            case "OAuth20J":
-                return getAuthorizationURL20(config, projectid, cb);
-            //break;
-            case "Simple":
-                return getAuthorizationURLSimple(config, projectid, cb);
+    public String getAuthorizationURL(Integer agentId, Integer projectId, String cb) {
+        AgentConfig config = agentconfigRepository.findByAgentId(agentId);
+        switch (config.getAuthenticationMethod()) {
+            case OAUTH_1A:
+                return getAuthorizationURL1a(config, projectId, cb);
+            case OAUTH_20:
+            case OAUTH_20J:
+                return getAuthorizationURL20(config, projectId, cb);
+            case SIMPLE:
+                return getAuthorizationURLSimple(config, projectId, cb);
             default:
         }
         return null;
     }
 
     @Override
-    public String storeToken(Integer agentid, Integer projectId, String oauth_verifier, String cb) {
-        Agentconfig config = agentconfigRepository.findByAgentid(agentid);
+    public void storeToken(Integer agentId, Integer projectId, String oauthVerifier, String cb) {
+        AgentConfig config = agentconfigRepository.findByAgentId(agentId);
         String token = "";
-        switch (config.getAuthenticationmethod()) {
-            case "OAuth1a":
-                token = getToken1a(config, projectId, oauth_verifier);
+        switch (config.getAuthenticationMethod()) {
+            case OAUTH_1A:
+                token = getToken1a(config, projectId, oauthVerifier);
                 break;
-            case "OAuth20":
-                token = getToken20(config, projectId, oauth_verifier, cb);
+            case OAUTH_20:
+                token = getToken20(config, projectId, oauthVerifier, cb);
                 break;
-            case  "OAuth20J":
-                token = getToken20j(config, projectId, oauth_verifier, cb);
+            case OAUTH_20J:
+                token = getToken20j(config, projectId, oauthVerifier, cb);
                 break;
-            case  "Simple":
-                token = oauth_verifier;
+            case SIMPLE:
+                token = oauthVerifier;
                 break;
             default:
         }
-        Agentsxproject newAgent = new Agentsxproject();
-        newAgent.setAgentid(config.getAgentid());
+        AgentsXProject newAgent = new AgentsXProject();
+        newAgent.setAgentId(config.getAgentId());
         newAgent.setKey(config.getApikey());
         newAgent.setToken(token);
-        newAgent.setProjectid(projectId);
-        newAgent.setIsactive("Y");
+        newAgent.setProjectId(projectId);
+        newAgent.setIsActive("Y");
         agentsxprojectRepository.save(newAgent);
-
-        return token;
     }
 
-    private String getAuthorizationURL1a(Agentconfig config, Integer projectid, String cb) {
-        CustomOAuth1 client = new CustomOAuth1(); //CustomOAuth1.instance();
-        client.set_AccessTokenEndpoint(config.getAccesstokenendpoint());
-        client.set_AuthorizationBaseUrl(config.getAuthorizationbaseurl());
-        client.set_RequestTokenEndpoint(config.getRequesttokenendpoint());
-
+    private String getAuthorizationURL1a(AgentConfig config, Integer projectId, String cb) {
+        CustomOAuth1 client = new CustomOAuth1();
+        client.setAccessTokenEndpoint(config.getAccessTokenEndpoint());
+        client.setAuthorizationBaseUrl(config.getAuthorizationBaseUrl());
+        client.setRequestTokenEndpoint(config.getRequestTokenEndpoint());
         try {
             OAuth10aService service = new ServiceBuilder(config.getApikey()).debug()
-                    .apiSecret(config.getApisecret())
-                    .callback(DEFAULT_CALLBACK1a + config.getAgentid() + "/" + projectid + "?cb=" + cb)
-                    .userAgent("InnoMetrics")
+                    .apiSecret(config.getApiSecret())
+                    .callback(defaultCallback1A + config.getAgentId() + "/" + projectId + CB + cb)
+                    .userAgent(INNO_METRICS.getValue())
                     .build(client);
             OAuth1RequestToken requestToken = service.getRequestToken();
             return service.getAuthorizationUrl(requestToken);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        } catch (ExecutionException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private String getAuthorizationURL20(Agentconfig config, Integer projectid, String cb) {
-        CustomOAuth2 client = new CustomOAuth2(); //CustomOAuth1.instance();
-        client.set_AccessTokenEndpoint(config.getAccesstokenendpoint());
-        client.set_AuthorizationBaseUrl(config.getAuthorizationbaseurl());
-
+    private String getAuthorizationURL20(AgentConfig config, Integer projectId, String cb) {
+        CustomOAuth2 client = new CustomOAuth2();
+        client.setAccessTokenEndpoint(config.getAccessTokenEndpoint());
+        client.setAuthorizationBaseUrl(config.getAuthorizationBaseUrl());
         try {
             OAuth20Service service = new ServiceBuilder(config.getApikey()).debug()
-                    .apiSecret(config.getApisecret())
-                    .callback(DEFAULT_CALLBACK20 + "?agentid=" + config.getAgentid() + "&projectid=" + projectid + "&cb=" + cb)
-                    .userAgent("InnoMetrics")
+                    .apiSecret(config.getApiSecret())
+                    .callback(defaultCallback20 + AGENT + config.getAgentId() + PROJECT + projectId + CB + cb)
+                    .userAgent(INNO_METRICS.getValue())
                     .build(client);
             return service.getAuthorizationUrl();
         } catch (Exception e) {
@@ -124,32 +121,29 @@ public class OAuthImp implements OAuthService {
     }
 
 
-    private String getAuthorizationURLSimple(Agentconfig config, Integer projectid, String cb) {
+    private String getAuthorizationURLSimple(AgentConfig config, Integer projectid, String cb) {
         try {
-            String Callback = DEFAULT_CALLBACKSimple + "?agentid=" + config.getAgentid() + "&projectid=" + projectid + "&cb=" + cb;
-            return config.getAuthorizationbaseurl() + "?callback=" + Callback;
+            String callback = defaultCallbacksimple + AGENT + config.getAgentId() + PROJECT + projectid + CB + cb;
+            return config.getAuthorizationBaseUrl() + "?callback=" + callback;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private String getToken1a(Agentconfig config, Integer projectid, String oauth_verifier) {
+    private String getToken1a(AgentConfig config, Integer projectId, String oauthVerifier) {
         CustomOAuth1 client = new CustomOAuth1();
-        client.set_AccessTokenEndpoint(config.getAccesstokenendpoint());
-        client.set_AuthorizationBaseUrl(config.getAuthorizationbaseurl());
-        client.set_RequestTokenEndpoint(config.getRequesttokenendpoint());
-
+        client.setAccessTokenEndpoint(config.getAccessTokenEndpoint());
+        client.setAuthorizationBaseUrl(config.getAuthorizationBaseUrl());
+        client.setRequestTokenEndpoint(config.getRequestTokenEndpoint());
         try {
             OAuth10aService service = new ServiceBuilder(config.getApikey()).debug()
-                    .apiSecret(config.getApisecret())
-                    .callback(DEFAULT_CALLBACK1a + config.getAgentid() + "/" + projectid)
-                    .userAgent("InnoMetrics")
+                    .apiSecret(config.getApiSecret())
+                    .callback(defaultCallback1A + config.getAgentId() + "/" + projectId)
+                    .userAgent(INNO_METRICS.getValue())
                     .build(client);
-
             OAuth1RequestToken requestToken = service.getRequestToken();
-            OAuth1AccessToken accessToken = service.getAccessToken(requestToken, oauth_verifier);
-
+            OAuth1AccessToken accessToken = service.getAccessToken(requestToken, oauthVerifier);
             return accessToken.getToken();
         } catch (Exception e) {
             e.printStackTrace();
@@ -157,46 +151,29 @@ public class OAuthImp implements OAuthService {
         }
     }
 
-    private String getToken20(Agentconfig config, Integer projectId, String oauth_verifier, String cb) {
+    private String getToken20(AgentConfig config, Integer projectId, String oauthVerifier, String cb) {
         CustomOAuth2 client = new CustomOAuth2();
-        client.set_AccessTokenEndpoint(config.getAccesstokenendpoint());
-        client.set_AuthorizationBaseUrl(config.getAuthorizationbaseurl());
-
-        try {
-
-
-            OAuth20Service service = new ServiceBuilder(config.getApikey()).debug()
-                    .apiSecret(config.getApisecret())
-                    .defaultScope("api")
-                    //.callback(DEFAULT_CALLBACK20)
-                    .callback(DEFAULT_CALLBACK20 + "?agentid=" + config.getAgentid() + "&projectid=" + projectId + "&cb=" + cb)
-                    .userAgent("InnoMetrics")
-                    .build(client);
-
-            OAuth2AccessToken token = service.getAccessToken(oauth_verifier);
-
-            return token.getAccessToken();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        client.setAccessTokenEndpoint(config.getAccessTokenEndpoint());
+        client.setAuthorizationBaseUrl(config.getAuthorizationBaseUrl());
+        return process(config, oauthVerifier, projectId, client, cb);
     }
 
-    private String getToken20j(Agentconfig config, Integer projectId, String oauth_verifier, String cb) {
+    private String getToken20j(AgentConfig config, Integer projectId, String oauthVerifier, String cb) {
         CustomOAuth2J client = new CustomOAuth2J();
-        client.set_AccessTokenEndpoint(config.getAccesstokenendpoint());
-        client.set_AuthorizationBaseUrl(config.getAuthorizationbaseurl());
+        client.setAccessTokenEndpoint(config.getAccessTokenEndpoint());
+        client.setAuthorizationBaseUrl(config.getAuthorizationBaseUrl());
+        return process(config, oauthVerifier, projectId, client, cb);
+    }
 
+    private String process(AgentConfig config, String oauthVerifier, Integer projectId, DefaultApi20 client, String cb) {
         try {
             OAuth20Service service = new ServiceBuilder(config.getApikey()).debug()
-                    .apiSecret(config.getApisecret())
+                    .apiSecret(config.getApiSecret())
                     .defaultScope("api")
-                    .callback(DEFAULT_CALLBACK20 + "?agentid=" + config.getAgentid() + "&projectid=" + projectId + "&cb=" + cb)
-                    .userAgent("InnoMetrics")
+                    .callback(defaultCallback20 + AGENT + config.getAgentId() + PROJECT + projectId + CB + cb)
+                    .userAgent(INNO_METRICS.getValue())
                     .build(client);
-
-            OAuth2AccessToken token = service.getAccessToken(oauth_verifier);
-
+            OAuth2AccessToken token = service.getAccessToken(oauthVerifier);
             return token.getAccessToken();
         } catch (Exception e) {
             e.printStackTrace();

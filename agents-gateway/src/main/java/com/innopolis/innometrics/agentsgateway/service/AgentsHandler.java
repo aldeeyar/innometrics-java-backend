@@ -1,212 +1,156 @@
 package com.innopolis.innometrics.agentsgateway.service;
 
-import com.innopolis.innometrics.agentsgateway.DTO.*;
+import com.innopolis.innometrics.agentsgateway.dto.*;
 import com.innopolis.innometrics.agentsgateway.entity.*;
-import com.innopolis.innometrics.agentsgateway.repository.AgentconfigRepository;
-import com.innopolis.innometrics.agentsgateway.repository.AgentconfigmethodsRepository;
-import com.innopolis.innometrics.agentsgateway.repository.AgentsxprojectRepository;
-import com.innopolis.innometrics.agentsgateway.repository.ReposxprojectRepository;
+import com.innopolis.innometrics.agentsgateway.repository.AgentConfigMethodsRepository;
+import com.innopolis.innometrics.agentsgateway.repository.AgentConfigRepository;
+import com.innopolis.innometrics.agentsgateway.repository.AgentsXProjectRepository;
+import com.innopolis.innometrics.agentsgateway.repository.ReposXProjectRepository;
+import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-/*import org.springframework.security.oauth.consumer.client.OAuthRestTemplate;
-import org.springframework.social.connect.ConnectionValues;
-import org.springframework.social.connect.UserProfile;
-import org.springframework.social.connect.support.OAuth1ConnectionFactory;
-import org.springframework.social.oauth1.*;*/
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-//import org.springframework.social.connect.ApiAdapter;
-
 @Service
+@AllArgsConstructor
 public class AgentsHandler {
-    private static Logger LOG = LogManager.getLogger();
-
-    final private static String GetReposList = "ProjectList";
-    final private static String ConnectRepo = "ProjectConnect";
-
-    @Autowired
-    AgentconfigRepository agentconfigRepository;
-
-    @Autowired
-    AgentconfigmethodsRepository agentconfigmethodsRepository;
-
-    @Autowired
-    ReposxprojectRepository reposxprojectRepository;
-
-    @Autowired
-    AgentsxprojectRepository agentsxprojectRepository;
+    private static final Logger LOG = LogManager.getLogger();
+    private static final String GET_REPOS_LIST = "ProjectList";
+    private static final String CONNECT_REPO = "ProjectConnect";
+    private final AgentConfigRepository agentconfigRepository;
+    private final AgentConfigMethodsRepository agentconfigmethodsRepository;
+    private final ReposXProjectRepository reposxprojectRepository;
+    private final AgentsXProjectRepository agentsxprojectRepository;
+    private final RestTemplate restTemplate;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    private RestTemplate restTemplate;
-
-    public ProjectListResponse getProjectList(Integer AgentID, Integer ProjectId) throws NoSuchFieldException, IllegalAccessException {
-
-        ProjectListResponse ProjectList = new ProjectListResponse();
-        Agentconfigmethods agentConfig = agentconfigmethodsRepository.findByAgentidAndOperation(AgentID, GetReposList);
-        Agentsxproject agentskeys = agentsxprojectRepository.findByAgentidAndProjectid(AgentID, ProjectId);
-        String uri = agentConfig.getEndpoint();//"http://innometric.guru:9098/keytoken";//
-
-        HttpHeaders headers = new HttpHeaders();
-
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
+    public ProjectListResponse getProjectList(Integer agentID, Integer projectId) throws NoSuchFieldException,
+            IllegalAccessException {
+        ProjectListResponse projectList = new ProjectListResponse();
+        AgentConfigMethods agentConfig = agentconfigmethodsRepository.findByAgentIdAndOperation(agentID, GET_REPOS_LIST);
+        AgentsXProject agentsKeys = agentsxprojectRepository.findByAgentIdAndProjectId(agentID, projectId);
+        String uri = agentConfig.getEndpoint();
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri);
-
-        Class<?> requestMapping = Agentsxproject.class;
-
-        for (Agentconfigdetails param : agentConfig.getParams()) {
-
+        Class<?> requestMapping = AgentsXProject.class;
+        for (AgentConfigDetails param : agentConfig.getParams()) {
             String paramValue = "";
-            if (param.getRequestparam() != null) {
-                LOG.info("getRequestparam -> " + param.getRequestparam());
-                Field f = requestMapping.getDeclaredField(param.getRequestparam());
+            if (param.getRequestParam() != null) {
+                LOG.info("getRequestparam -> {} ", param.getRequestParam());
+                Field f = requestMapping.getDeclaredField(param.getRequestParam());
                 f.setAccessible(true);
-                paramValue = f.get(agentskeys).toString();
+                paramValue = f.get(agentsKeys).toString();
             } else {
-                paramValue = param.getDefaultvalue();
-                LOG.info("getDefaultvalue -> " + param.getDefaultvalue());
+                paramValue = param.getDefaultValue();
+                LOG.info("getDefaultvalue -> {}", param.getDefaultValue());
             }
-
-
             builder.queryParam(
-                    param.getParamname(),
+                    param.getParamName(),
                     paramValue
             );
         }
-
-        HttpMethod requestMethod = getRequestType(agentConfig.getRequesttype().toUpperCase());
-
-        ResponseEntity<LinkedHashMap[]> response = restTemplate.exchange(builder.toUriString(), requestMethod/*HttpMethod.POST*/, null, LinkedHashMap[].class);
-
-        HttpStatus status = response.getStatusCode();
+        HttpMethod requestMethod = CommonFieldsProcessor.getRequestType(agentConfig.getRequestType().toUpperCase());
+        ResponseEntity<LinkedHashMap[]> response = restTemplate.exchange(builder.toUriString(), requestMethod, null, LinkedHashMap[].class);
         Class<?> responseMapping = ProjectDTO.class;
-        ProjectList.setAgentId(AgentID);
+        projectList.setAgentId(agentID);
         for (LinkedHashMap element : response.getBody()) {
             ProjectDTO projectTmp = new ProjectDTO();
-            for (Agentresponseconfig responseF : agentConfig.getResponseParams()) {
-                Field f = responseMapping.getDeclaredField(responseF.getParamname());
+            for (AgentResponseConfig responseF : agentConfig.getResponseParams()) {
+                Field f = responseMapping.getDeclaredField(responseF.getParamName());
                 f.setAccessible(true);
-                f.set(projectTmp, element.get(responseF.getResponseparam()).toString());
+                f.set(projectTmp, element.get(responseF.getResponseParam()).toString());
             }
-
-            ProjectList.getProjectList().add(projectTmp);
+            projectList.getProjectList().add(projectTmp);
         }
-
-        for (ProjectDTO project :ProjectList.getProjectList()) {
-            List<Reposxproject> saved = reposxprojectRepository.findByRepoid(project.getReference());
-            if(saved.size() > 0) project.setIsconnected("Y");
-            else project.setIsconnected("N");
+        for (ProjectDTO project : projectList.getProjectList()) {
+            List<ReposXProject> saved = reposxprojectRepository.findByRepoId(project.getReference());
+            if (!saved.isEmpty()) project.setIsConnected("Y");
+            else project.setIsConnected("N");
         }
-
-        return ProjectList;
+        return projectList;
     }
 
 
     public Boolean getConnectProject(ConnectProjectRequest request) throws NoSuchFieldException, IllegalAccessException {
         LOG.info("getConnectProject...");
-        Agentconfigmethods agentConfig = agentconfigmethodsRepository.findByAgentidAndOperation(request.getAgentId(), ConnectRepo);
-        Agentsxproject agentskeys = agentsxprojectRepository.findByAgentidAndProjectid(request.getAgentId(), request.getProjectID());
-
+        AgentConfigMethods agentConfig = agentconfigmethodsRepository.findByAgentIdAndOperation(request.getAgentId(), CONNECT_REPO);
+        AgentsXProject agentsKeys = agentsxprojectRepository.findByAgentIdAndProjectId(request.getAgentId(), request.getProjectID());
         String uri = agentConfig.getEndpoint();
-
-        HttpHeaders headers = new HttpHeaders();
-
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri);
-
-        Class<?> agentConfigMapping = Agentsxproject.class;
-
+        Class<?> agentConfigMapping = AgentsXProject.class;
         Class<?> requestMapping = ConnectProjectRequest.class;
         LOG.info("setting paramters...");
-        for (Agentconfigdetails param : agentConfig.getParams()) {
+        for (AgentConfigDetails param : agentConfig.getParams()) {
             String paramValue = "";
-
-            if (("request").equalsIgnoreCase(param.getRequesttype())) {
-                Field f = requestMapping.getDeclaredField(param.getRequestparam());
+            if (("request").equalsIgnoreCase(param.getRequestType())) {
+                Field f = requestMapping.getDeclaredField(param.getRequestParam());
                 f.setAccessible(true);
                 paramValue = f.get(request).toString();
             } else {
-                Field f = agentConfigMapping.getDeclaredField(param.getRequestparam());
+                Field f = agentConfigMapping.getDeclaredField(param.getRequestParam());
                 f.setAccessible(true);
-                paramValue = f.get(agentskeys).toString();
+                paramValue = f.get(agentsKeys).toString();
             }
-            LOG.info("setting " + param.getParamname() + " -> " + paramValue);
+            LOG.info("setting {} -> {}", param.getParamName(), paramValue);
             builder.queryParam(
-                    param.getParamname(),
+                    param.getParamName(),
                     paramValue
             );
         }
-
-        /*
-        for (ParamsConfigDTO d : request.getParams()) {
-            builder.queryParam(
-                    d.getParamname(),
-                    d.getValue()
-            );
-        }
-        */
-
-        HttpMethod requestMethod = getRequestType(agentConfig.getRequesttype().toUpperCase());
+        HttpMethod requestMethod = CommonFieldsProcessor.getRequestType(agentConfig.getRequestType().toUpperCase());
         LOG.info("creating webhook...");
-        ResponseEntity<LinkedHashMap> response = restTemplate.exchange(builder.toUriString(), requestMethod, null, LinkedHashMap.class);
-
+        ResponseEntity<LinkedHashMap> response = restTemplate
+                .exchange(builder.toUriString(), requestMethod, null, LinkedHashMap.class);
         HttpStatus status = response.getStatusCode();
-        LOG.info("response -> " + status);
+        LOG.info("response -> {}", status);
         if (status == HttpStatus.CREATED || status == HttpStatus.OK) {
-            Reposxproject newrepo = new Reposxproject();
-            newrepo.setAgentid(request.getAgentId());
-            newrepo.setProjectid(request.getProjectID());
-            newrepo.setRepoid(request.getRepoReference());
-            newrepo.setIsactive("Y");
+            ReposXProject newrepo = new ReposXProject();
+            newrepo.setAgentId(request.getAgentId());
+            newrepo.setProjectId(request.getProjectID());
+            newrepo.setRepoId(request.getRepoReference());
+            newrepo.setIsActive("Y");
             LOG.info("Saving repo connected");
             reposxprojectRepository.save(newrepo);
             return true;
         }
-
         return false;
     }
 
-    public RepoDataPerProjectResponse getRepoDataPerProject(Integer ProjectId) {
-        List<Reposxproject> repos = reposxprojectRepository.findByProjectid(ProjectId);
+    public RepoDataPerProjectResponse getRepoDataPerProject(Integer projectId) {
+        List<ReposXProject> repos = reposxprojectRepository.findByProjectId(projectId);
         RepoDataPerProjectResponse response = new RepoDataPerProjectResponse();
-        for (Reposxproject repo : repos) {
-            Agentconfig agent = agentconfigRepository.getOne(repo.getAgentid());
+        for (ReposXProject repo : repos) {
+            AgentConfig agent = agentconfigRepository.getOne(repo.getAgentId());
             RepoResponseDTO repoResponse = new RepoResponseDTO();
-            repoResponse.setAgentname(agent.getAgentname());
-            for (Agentdataconfig datasource : agent.getDataconfig()) {
-                String source = datasource.getSchemaname() + "." + datasource.getTablename();
-                String fields = datasource.getEventauthorfield() + "  eventauthor, " +
-                        datasource.getEventdescriptionfield() + " eventdescription, " +
-                        datasource.getEventdatefield() + " eventdate";
-                String queryStr = "select " + fields + " from " + source + " where " + agent.getRepoidfield() + " = ?1";
-
-                //LOG.info(queryStr);
+            repoResponse.setAgentName(agent.getAgentName());
+            for (AgentDataConfig datasource : agent.getDataconfig()) {
+                String source = datasource.getSchemaName() + "." + datasource.getTableName();
+                String fields = datasource.getEventAuthorField() + "  eventauthor, " +
+                        datasource.getEventDescriptionField() + " eventdescription, " +
+                        datasource.getEventDateField() + " eventdate";
+                String queryStr = "select " + fields + " from " + source + " where " + agent.getRepoIdField() + " = ?1";
                 try {
                     Query query = entityManager.createNativeQuery(queryStr);
-                    query.setParameter(1, repo.getRepoid());
+                    query.setParameter(1, repo.getRepoId());
                     List<Object[]> result = query.getResultList();
                     for (Object[] row : result) {
                         RepoEventDTO eventRow = new RepoEventDTO();
-                        eventRow.setEventauthor(row[0].toString());
-                        eventRow.setEventdescription(row[1].toString());
-                        eventRow.setEventdate(row[2].toString());
+                        eventRow.setEventAuthor(row[0].toString());
+                        eventRow.setEventDescription(row[1].toString());
+                        eventRow.setEventDate(row[2].toString());
                         repoResponse.getEvents().add(eventRow);
                     }
                 } catch (Exception e) {
@@ -218,20 +162,4 @@ public class AgentsHandler {
         }
         return response;
     }
-
-    private HttpMethod getRequestType(String requestType) {
-        switch (requestType) {
-            case "GET":
-                return HttpMethod.GET;
-            case "POST":
-                return HttpMethod.POST;
-            case "PUT":
-                return HttpMethod.PUT;
-            default:
-                return null;
-        }
-
-
-    }
-
 }

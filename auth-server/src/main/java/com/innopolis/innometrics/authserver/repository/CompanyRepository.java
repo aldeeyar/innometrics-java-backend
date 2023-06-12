@@ -9,9 +9,9 @@ import java.util.List;
 
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Integer> {
-    Company findByCompanyid(Integer companyid);
+    Company findByCompanyId(Integer companyId);
 
-    Boolean existsByCompanyid(Integer companyid);
+    Boolean existsByCompanyId(Integer companyId);
 
     @Query(value = "select * from innometricsauth.company p where p.isactive = 'Y'", nativeQuery = true)
     List<Company> findAllActive();

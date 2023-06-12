@@ -1,31 +1,35 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.*;
+import com.innopolis.innometrics.restapi.constants.RequestConstants;
+import com.innopolis.innometrics.restapi.dto.ProjectListRequest;
+import com.innopolis.innometrics.restapi.dto.ProjectRequest;
+import com.innopolis.innometrics.restapi.dto.UserListResponse;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
+@RequiredArgsConstructor
 public class AdminService {
-    private static Logger LOG = LogManager.getLogger();
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    private String baseURL = "http://INNOMETRICS-AUTH-SERVER/AdminAPI";
-
+    private static final Logger LOG = LogManager.getLogger();
+    private static final String BASE_URL = "http://INNOMETRICS-AUTH-SERVER/AdminAPI";
+    private static final String PROJECT_URL = "/Project";
+    private final RestTemplate restTemplate;
 
     @HystrixCommand(commandKey = "createProject",
             fallbackMethod = "createProjectFallback",
             commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
     public ProjectRequest createProject(ProjectRequest project, String token) {
-        String uri = baseURL + "/Project";
+        String uri = BASE_URL + PROJECT_URL;
         return uploadProject(project, token, uri, HttpMethod.POST);
     }
 
@@ -33,104 +37,63 @@ public class AdminService {
             fallbackMethod = "updateProjectFallback",
             commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
     public ProjectRequest updateProject(ProjectRequest project, String token) {
-        String uri = baseURL + "/Project/" + project.getProjectID();
+        String uri = BASE_URL + PROJECT_URL + "/" + project.getProjectID();
         return uploadProject(project, token, uri, HttpMethod.PUT);
     }
 
     private ProjectRequest uploadProject(ProjectRequest project, String token, String uri, HttpMethod method) {
-
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Token", token);
-
+        headers.set(RequestConstants.TOKEN.getValue(), token);
         HttpEntity<ProjectRequest> entity = new HttpEntity<>(project, headers);
         try {
-            ResponseEntity<ProjectRequest> response = restTemplate.exchange(uri, method, entity, ProjectRequest.class);
-
-            HttpStatus status = response.getStatusCode();
-
+            ResponseEntity<ProjectRequest> response = restTemplate
+                    .exchange(uri, method, entity, ProjectRequest.class);
             return response.getBody();
         } catch (Exception e) {
             LOG.warn(e);
             return new ProjectRequest();
         }
-
     }
 
-    public ProjectRequest updateProjectFallback(ProjectRequest project, String token, Throwable exception) {
-        LOG.warn("CreateProjectFallback method used");
-        LOG.warn(exception);
-        return new ProjectRequest();
-    }
 
     @HystrixCommand(commandKey = "deleteProject",
             fallbackMethod = "deleteProjectFallback",
             commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
-    public ProjectRequest deleteProject(Integer projectId, String token) {
-        String uri = baseURL + "/Project";
-
+    public void deleteProject(Integer projectId, String token) {
+        String uri = BASE_URL + PROJECT_URL;
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Token", token);
-
+        headers.set(RequestConstants.TOKEN.getValue(), token);
         HttpEntity<ProjectRequest> entity = new HttpEntity<>(null, headers);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
-                .queryParam("id", projectId);
-
+                .queryParam(RequestConstants.ID.getValue(), projectId);
         try {
-            ResponseEntity<ProjectRequest> response = restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, entity, ProjectRequest.class);
-
-            HttpStatus status = response.getStatusCode();
-
-            return response.getBody();
+            ResponseEntity<ProjectRequest> response = restTemplate
+                    .exchange(builder.toUriString(), HttpMethod.DELETE, entity, ProjectRequest.class);
+            response.getBody();
         } catch (Exception e) {
             LOG.warn(e);
-            return null;
         }
-
-    }
-
-    public ProjectRequest deleteProjectFallback(Integer projectId, String token, Throwable exception) {
-        LOG.warn("deleteProjectFallback method used");
-        LOG.warn(exception);
-        return null;
     }
 
     @HystrixCommand(commandKey = "getProject",
             fallbackMethod = "getProjectFallback",
             commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
     public ProjectRequest getById(int id) {
-        String uri = baseURL + "/Project/" + id;
-
-        //HttpHeaders headers = new HttpHeaders();
-        //headers.set("Token", token);
-
-
-        //HttpEntity<UserListRequest> entity = new HttpEntity<>(null, headers);
+        String uri = BASE_URL + PROJECT_URL + "/" + id;
         try {
-            ResponseEntity<ProjectRequest> response = restTemplate.exchange(uri, HttpMethod.GET, null, ProjectRequest.class);
-            HttpStatus status = response.getStatusCode();
-
-            //if (status==HttpStatus.NOT_FOUND)
-            // return
+            ResponseEntity<ProjectRequest> response = restTemplate
+                    .exchange(uri, HttpMethod.GET, null, ProjectRequest.class);
             return response.getBody();
         } catch (Exception e) {
             LOG.warn(e);
             return null;
         }
-
     }
-
-    public ProjectRequest getProjectFallback(int id, Throwable exception) {
-        LOG.warn("getProjectFallback method used");
-        LOG.warn(exception);
-        return new ProjectRequest();
-    }
-
-
     @HystrixCommand(commandKey = "getActiveProjects",
             fallbackMethod = "getActiveProjectsFallback",
             commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
     public ProjectListRequest getActiveProjects() {
-        String uri = baseURL + "/Project/active";
+        String uri = BASE_URL + PROJECT_URL + "active";
         return getProjects(uri);
     }
 
@@ -138,89 +101,44 @@ public class AdminService {
             fallbackMethod = "getAllProjectsFallback",
             commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
     public ProjectListRequest getAllProjects() {
-        String uri = baseURL + "/Project/all";
+        String uri = BASE_URL + PROJECT_URL + "/all";
         return getProjects(uri);
     }
 
     private ProjectListRequest getProjects(String uri) {
-        HttpHeaders headers = new HttpHeaders();
-        //headers.set("Token", token);
-        //HttpEntity<ProjectListRequest> entity = new HttpEntity<>(request, headers);
         try {
-            ResponseEntity<ProjectListRequest> response = restTemplate.exchange(uri, HttpMethod.GET, null, ProjectListRequest.class);
-            HttpStatus status = response.getStatusCode();
+            ResponseEntity<ProjectListRequest> response = restTemplate
+                    .exchange(uri, HttpMethod.GET, null, ProjectListRequest.class);
             return response.getBody();
         } catch (Exception e) {
             LOG.warn(e);
             return null;
         }
     }
-
-    public ProjectListRequest getActiveProjectsFallback(Throwable exception) {
-        LOG.warn("getActiveProjectsFallback method used");
-        LOG.warn(exception);
-        return null;
-    }
-
 
     @HystrixCommand(commandKey = "getActiveUsers",
             fallbackMethod = "getActiveUsersFallback",
             commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
     public UserListResponse getActiveUsers(String request) {
-        String uri = baseURL + "/Users";
-
-        HttpHeaders headers = new HttpHeaders();
-        //headers.set("Token", token);
-
-
+        String uri = BASE_URL + "/Users";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("projectId", request);
-
-
-        //HttpEntity<UserListRequest> entity = new HttpEntity<>(request, headers);
         try {
-            ResponseEntity<UserListResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null, UserListResponse.class);
-            HttpStatus status = response.getStatusCode();
-
+            ResponseEntity<UserListResponse> response = restTemplate
+                    .exchange(builder.toUriString(), HttpMethod.GET, null, UserListResponse.class);
             return response.getBody();
         } catch (Exception e) {
             LOG.warn(e);
             return null;
         }
-
     }
-
-    public UserListResponse getActiveUsersFallback(String request, Throwable exception) {
-        LOG.warn("getActiveUsersFallback method used");
-        LOG.warn(exception);
-        return null;
-    }
-
-
     @HystrixCommand(commandKey = "getProjectsByUsername",
             fallbackMethod = "getProjectsByUsernameFallback",
             commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
     public ProjectListRequest getProjectsByUsername(String userName) {
-        //ProjectListResponse response = new ProjectListResponse();
-        String uri = baseURL + "/Users/projects/" + userName;
-
-        ResponseEntity<ProjectListRequest> response = null;
-
-        HttpEntity<String> entity = new HttpEntity<>(null);
-        response = restTemplate.exchange(uri, HttpMethod.GET, entity, ProjectListRequest.class);
-
+        String uri = BASE_URL + "/Users/projects/" + userName;
+        ResponseEntity<ProjectListRequest> response;
+        response = restTemplate.exchange(uri, HttpMethod.GET, null, ProjectListRequest.class);
         return response.getBody();
-    }
-
-    public ProjectListRequest getProjectsByUsernameFallback(String userName, Throwable exception) {
-        LOG.warn("getProjectsByUsernameFallback method used");
-        LOG.warn(exception);
-        return null;
-    }
-
-    public ProjectListRequest getAllProjectsFallback(Throwable exception) {
-        LOG.warn("getAllProjectsFallback method used");
-        LOG.warn(exception);
-        return new ProjectListRequest();
     }
 }

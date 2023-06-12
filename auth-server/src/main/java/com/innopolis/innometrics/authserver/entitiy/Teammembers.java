@@ -16,27 +16,20 @@ import java.util.Date;
 public class Teammembers implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(updatable = false)
-    private Integer memberid;
-
-    @Column
-    private Integer teamid;
-
+    @Column(updatable = false, name = "memberid")
+    private Integer memberId;
+    @Column(name = "teamid")
+    private Integer teamId;
     @Column
     private String email;
-
-    @Column
-    private String isactive;
-
+    @Column(name = "isactive")
+    private String isActive;
     @Column(name = "creationdate", insertable = false, updatable = false)
-    private Date creationdate;
-
+    private Date creationDate;
     @Column(name = "createdby", insertable = false, updatable = false)
-    private String createdby;
-
+    private String createdBy;
     @Column(name = "lastupdate", insertable = false)
-    private Date lastupdate;
-
+    private Date lastUpdate;
     @Column(name = "updateby", insertable = false)
-    private String updateby;
+    private String updateBy;
 }

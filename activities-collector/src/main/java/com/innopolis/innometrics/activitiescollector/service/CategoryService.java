@@ -1,207 +1,153 @@
 package com.innopolis.innometrics.activitiescollector.service;
 
-import com.innopolis.innometrics.activitiescollector.DTO.*;
-import com.innopolis.innometrics.activitiescollector.entity.*;
-import com.innopolis.innometrics.activitiescollector.entity.Process;
-import com.innopolis.innometrics.activitiescollector.repository.*;
+import com.innopolis.innometrics.activitiescollector.dto.*;
+import com.innopolis.innometrics.activitiescollector.entity.ActAppxCategory;
+import com.innopolis.innometrics.activitiescollector.entity.ActCategories;
+import com.innopolis.innometrics.activitiescollector.repository.ActAppxCategoryRepository;
+import com.innopolis.innometrics.activitiescollector.repository.ActCategoryRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class CategoryService {
+    private final ActCategoryRepository actCategoryRepository;
+    private final ActAppxCategoryRepository actAppxCategoryRepository;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-    @Autowired
-    ActCategoryRepository actCategoryRepository;
-
-    @Autowired
-    ActAppxCategoryRepository actAppxCategoryRepository;
-
-    public CategoryResponse CreateCategory(CategoryRequest categoryRequest, String UserName) {
+    public CategoryResponse createCategory(CategoryRequest categoryRequest, String userName) {
         ActCategories act = new ActCategories();
-        act.setCatname(categoryRequest.getCategoryname());
-        act.setIsactive("Y");
-        act.setCreatedby(UserName);
-
+        act.setCatName(categoryRequest.getCategoryName());
+        act.setIsActive("Y");
+        act.setCreatedBy(userName);
         act = actCategoryRepository.save(act);
-        CategoryResponse response = new CategoryResponse();
-
-        response.setCatid(act.getCatid());
-        response.setCatname(act.getCatname());
-        response.setIsactive(act.getIsactive());
-        response.setCreatedby(act.getCreatedby());
-        response.setCreationdate(act.getCreationdate());
-        response.setUpdateby(act.getUpdateby());
-        response.setLastupdate(act.getLastupdate());
-
-        return response;
+        return getCategoryResponse(act);
     }
 
-    public CategoryResponse UpdateCategory(CategoryRequest categoryRequest, String UserName) {
+    public CategoryResponse updateCategory(CategoryRequest categoryRequest, String userName) {
         ActCategories act;
-
-        act = actCategoryRepository.getOne(categoryRequest.getCategoryid());
-        act.setCatname(categoryRequest.getCategoryname());
-        act.setIsactive(categoryRequest.getIsactive());
-        act.setUpdateby(UserName);
-        act.setLastupdate(new Date());
-
+        act = actCategoryRepository.getOne(categoryRequest.getCategoryId());
+        act.setCatName(categoryRequest.getCategoryName());
+        act.setIsActive(categoryRequest.getIsActive());
+        act.setUpdateBy(userName);
+        act.setLastUpdate(new Date());
         act = actCategoryRepository.save(act);
-
-        CategoryResponse response = new CategoryResponse();
-
-        response.setCatid(act.getCatid());
-        response.setCatname(act.getCatname());
-        response.setIsactive(act.getIsactive());
-        response.setCreatedby(act.getCreatedby());
-        response.setCreationdate(act.getCreationdate());
-        response.setUpdateby(act.getUpdateby());
-        response.setLastupdate(act.getLastupdate());
-
-        return response;
+        return getCategoryResponse(act);
     }
 
     public CategoryListResponse getAllCategories() {
-        List<ActCategories> categories = new ArrayList<>();
-
+        List<ActCategories> categories;
         categories = actCategoryRepository.findAll();
-
-        if (categories.size() == 0) return null;
-
+        if (categories.isEmpty()) return null;
         CategoryListResponse response = new CategoryListResponse();
-
         ModelMapper modelMapper = new ModelMapper();
         for (ActCategories cat : categories) {
             CategoryResponse catDTO = modelMapper.map(cat, CategoryResponse.class);
             response.getCategories().add(catDTO);
         }
-
         return response;
     }
 
-    public CategoryResponse getCategoryById(Integer categoryid) {
-        List<ActCategories> act = new ArrayList<>();
-
-        act = actCategoryRepository.findAllById(Collections.singleton(categoryid));
-
-        if (act.size() == 0) return null;
-
+    public CategoryResponse getCategoryById(Integer categoryId) {
+        List<ActCategories> act;
+        act = actCategoryRepository.findAllById(Collections.singleton(categoryId));
+        if (act.isEmpty()) return null;
         CategoryResponse response = new CategoryResponse();
-
-        response.setCatid(act.get(0).getCatid());
-        response.setCatname(act.get(0).getCatname());
-        response.setIsactive(act.get(0).getIsactive());
-        response.setCreatedby(act.get(0).getCreatedby());
-        response.setCreationdate(act.get(0).getCreationdate());
-        response.setUpdateby(act.get(0).getUpdateby());
-        response.setLastupdate(act.get(0).getLastupdate());
-
+        response.setCatId(act.get(0).getCatId());
+        response.setCatName(act.get(0).getCatName());
+        response.setIsActive(act.get(0).getIsActive());
+        response.setCreatedBy(act.get(0).getCreatedBy());
+        response.setCreationDate(act.get(0).getCreationDate());
+        response.setUpdateBy(act.get(0).getUpdateBy());
+        response.setLastUpdate(act.get(0).getLastUpdate());
         return response;
     }
 
-    public Boolean exitsByCategoryName(String categoryname) {
-        return actCategoryRepository.existsByCatname(categoryname);
-    }
-
-
-    public AppCategoryResponse CreateAppCategory(AppCategoryRequest appcategoryRequest, String UserName) {
+    public AppCategoryResponse createAppCategory(AppCategoryRequest appcategoryRequest, String username) {
         ActAppxCategory app = new ActAppxCategory();
-        app.setAppname(appcategoryRequest.getAppname());
-        app.setCatid(appcategoryRequest.getCatid());
-        app.setIsactive("Y");
-        app.setCreatedby(UserName);
+        app.setAppName(appcategoryRequest.getAppName());
+        app.setCatId(appcategoryRequest.getCatId());
+        app.setIsActive("Y");
+        app.setCreatedBy(username);
         app.setCreationdate(new Date());
-
-        app = actAppxCategoryRepository.save(app);
-        AppCategoryResponse response = new AppCategoryResponse();
-
-        response.setAppid(app.getAppid());
-        response.setAppname(app.getAppname());
-        response.setCatid(app.getCatid());
-        response.setIsactive(app.getIsactive());
-        response.setCreatedby(app.getCreatedby());
-        response.setCreationdate(app.getCreationdate());
-        response.setUpdateby(app.getUpdateby());
-        response.setLastupdate(app.getLastupdate());
-
-        return response;
+        return getAppCategoryResponse(app);
     }
 
-    public AppCategoryResponse UpdateAppCategory(AppCategoryRequest appcategoryRequest, String UserName) {
+    public AppCategoryResponse updateAppCategory(AppCategoryRequest appcategoryRequest, String userName) {
         ActAppxCategory app;
-
-        app = actAppxCategoryRepository.getOne(appcategoryRequest.getAppid());
-        app.setAppname(appcategoryRequest.getAppname());
-        app.setCatid(appcategoryRequest.getCatid());
-        app.setIsactive(appcategoryRequest.getIsactive());
-        app.setUpdateby(UserName);
-        app.setLastupdate(new Date());
-
-        app = actAppxCategoryRepository.save(app);
-
-        AppCategoryResponse response = new AppCategoryResponse();
-
-        response.setAppid(app.getAppid());
-        response.setAppname(app.getAppname());
-        response.setCatid(app.getCatid());
-        response.setIsactive(app.getIsactive());
-        response.setCreatedby(app.getCreatedby());
-        response.setCreationdate(app.getCreationdate());
-        response.setUpdateby(app.getUpdateby());
-        response.setLastupdate(app.getLastupdate());
-
-        return response;
+        app = actAppxCategoryRepository.getOne(appcategoryRequest.getAppId());
+        app.setAppName(appcategoryRequest.getAppName());
+        app.setCatId(appcategoryRequest.getCatId());
+        app.setIsActive(appcategoryRequest.getIsActive());
+        app.setUpdateBy(userName);
+        app.setLastUpdate(new Date());
+        return getAppCategoryResponse(app);
     }
 
     public AppCategoryResponse getAppCategoryById(Integer appid) {
-        List<ActAppxCategory> app = new ArrayList<>();
-
+        List<ActAppxCategory> app;
         app = actAppxCategoryRepository.findAllById(Collections.singleton(appid));
-
         AppCategoryResponse response = new AppCategoryResponse();
-        if (app.size() == 0) return null;
-        response.setAppid(app.get(0).getAppid());
-        response.setAppname(app.get(0).getAppname());
-        response.setCatid(app.get(0).getCatid());
-        response.setIsactive(app.get(0).getIsactive());
-        response.setCreatedby(app.get(0).getCreatedby());
-        response.setCreationdate(app.get(0).getCreationdate());
-        response.setUpdateby(app.get(0).getUpdateby());
-        response.setLastupdate(app.get(0).getLastupdate());
-
+        if (app.isEmpty()) return null;
+        response.setAppId(app.get(0).getAppid());
+        response.setAppName(app.get(0).getAppName());
+        response.setCatId(app.get(0).getCatId());
+        response.setIsActive(app.get(0).getIsActive());
+        response.setCreatedBy(app.get(0).getCreatedBy());
+        response.setCreationDate(app.get(0).getCreationdate());
+        response.setUpdateBy(app.get(0).getUpdateBy());
+        response.setLastUpdate(app.get(0).getLastUpdate());
         return response;
     }
 
-
-
     public CategoriesTimeReportResponse getTimeReport(TimeReportRequest request) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         List<ICategoriesReport> result = actCategoryRepository.getTimeReport(
                 request.getProjectID(),
                 request.getEmail(),
-                (request.getMin_Date() != null ? formatter.format(request.getMin_Date()) : null),
-                (request.getMax_Date() != null ? formatter.format(request.getMax_Date()) : null));
-
+                (request.getMinDate() != null ? formatter.format(request.getMinDate()) : null),
+                (request.getMaxDate() != null ? formatter.format(request.getMaxDate()) : null));
         CategoriesTimeReportResponse response = new CategoriesTimeReportResponse();
         for (ICategoriesReport a : result) {
             CategoriesReport temp = new CategoriesReport();
-
-            temp.setCatname(a.getCatname());
-            temp.setCatdescription(a.getCatdescription());
-            temp.setTimeused(a.getTimeused());
-
-            response.getReport().add(temp);
+            temp.setCatName(a.getCatName());
+            temp.setCatDescription(a.getCatDescription());
+            temp.setTimeUsed(a.getTimeUsed());
+            response.getReports().add(temp);
         }
+        return response;
+    }
 
+    private CategoryResponse getCategoryResponse(ActCategories act) {
+        CategoryResponse response = new CategoryResponse();
+        response.setCatId(act.getCatId());
+        response.setCatName(act.getCatName());
+        response.setIsActive(act.getIsActive());
+        response.setCreatedBy(act.getCreatedBy());
+        response.setCreationDate(act.getCreationDate());
+        response.setUpdateBy(act.getUpdateBy());
+        response.setLastUpdate(act.getLastUpdate());
+        return response;
+    }
+
+    private AppCategoryResponse getAppCategoryResponse(ActAppxCategory app) {
+        app = actAppxCategoryRepository.save(app);
+        AppCategoryResponse response = new AppCategoryResponse();
+        response.setAppId(app.getAppid());
+        response.setAppName(app.getAppName());
+        response.setCatId(app.getCatId());
+        response.setIsActive(app.getIsActive());
+        response.setCreatedBy(app.getCreatedBy());
+        response.setCreationDate(app.getCreationdate());
+        response.setUpdateBy(app.getUpdateBy());
+        response.setLastUpdate(app.getLastUpdate());
         return response;
     }
 }

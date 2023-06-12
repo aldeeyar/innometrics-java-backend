@@ -1,15 +1,15 @@
 databaseChangeLog:
     - changeSet:
-        id: "add delete persist constraint to table permissions"
-        author: azag
+          id: "add delete persist constraint to table permissions"
+          author: azag
 
-        changes:
-          - addForeignKeyConstraint:
-              baseColumnNames:  page
-              baseTableName:  permission
-              baseTableSchemaName:  innometricsauth
-              constraintName:  fk_page
-              onDelete:  RESTRICT
-              referencedColumnNames:  page
-              referencedTableName:  page
-              referencedTableSchemaName:  innometricsauth
+          changes:
+              - addForeignKeyConstraint:
+                    baseColumnNames:  page
+                    baseTableName:  permission
+                    baseTableSchemaName:  innometricsauth
+                    constraintName:  fk_page
+                    onDelete:  RESTRICT
+                    referencedColumnNames:  page
+                    referencedTableName:  page
+                    referencedTableSchemaName:  innometricsauth

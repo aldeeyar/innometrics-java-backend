@@ -1,6 +1,5 @@
 package com.innopolis.innometrics.restapi.config;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -23,18 +22,7 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
     }
 
     @Override
-    public void handleError(ClientHttpResponse httpResponse)
-            throws IOException {
-
-        if (httpResponse.getStatusCode()
-                .series() == SERVER_ERROR) {
-            // handle SERVER_ERROR
-        } else if (httpResponse.getStatusCode()
-                .series() == CLIENT_ERROR) {
-            // handle CLIENT_ERROR
-            if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
-                //throw new NotFoundException();
-            }
-        }
+    public void handleError(ClientHttpResponse httpResponse) {
+        // document why this method is empty
     }
 }

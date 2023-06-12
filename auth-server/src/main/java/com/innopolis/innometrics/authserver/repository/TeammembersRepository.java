@@ -9,15 +9,15 @@ import java.util.List;
 
 @Repository
 public interface TeammembersRepository extends JpaRepository<Teammembers, Integer> {
-    List<Teammembers> findByTeamid(Integer teamid);
+    List<Teammembers> findByTeamId(Integer teamid);
 
     List<Teammembers> findByEmail(String email);
 
-    Teammembers findByEmailAndTeamid(String email, Integer teamid);
+    Teammembers findByEmailAndTeamId(String email, Integer teamId);
 
-    Boolean existsByTeamidAndEmail(Integer teamid, String email);
+    Boolean existsByTeamIdAndEmail(Integer teamId, String email);
 
-    Teammembers findByMemberid(Integer memberid);
+    Teammembers findByMemberId(Integer memberId);
 
     @Query(value = "select * from innometricsauth.teammembers p where p.isactive = 'Y'", nativeQuery = true)
     List<Teammembers> findAllActive();

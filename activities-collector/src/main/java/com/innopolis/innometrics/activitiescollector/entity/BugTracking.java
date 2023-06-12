@@ -4,7 +4,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Date;
 
 
@@ -12,43 +11,29 @@ import java.util.Date;
 @Data
 @Table(name = "bug_tracking")
 public class BugTracking implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer bugId;
-
-    @Column
-    private String username;
-
+    @Column(name = "username")
+    private String userName;
     @Column
     private String title;
-
     @Column(name = "class")
     private String classOfBug;
-
     @Column
     private Integer line;
-
     @Column
     private String comment;
-
     @Column
     private String trace;
-
     @Column
     private String os;
-
     @Column
     private String dataCollectorVersion;
-
     @Column(name = "creationdate", insertable = false, updatable = false)
-    private Date creationdate;
-
+    private Date creationDate;
     @Column(name = "lastupdate")
-    private Date lastupdate;
-
-    // 0 - not solved, 1 - solved
+    private Date lastUpdate;
     @Column
     private boolean status;
-
 }

@@ -1,0 +1,79 @@
+databaseChangeLog:
+  - changeSet:
+      id: "adding user profile fields "
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsauth
+            tableName: user
+            columns:
+              - column:
+                  name: birthday
+                  type: Varchar(256)
+              - column:
+                  name: gender
+                  type: Varchar(256)
+              - column:
+                  name: facebook_alias
+                  type: Varchar(256)
+              - column:
+                  name: telegram_alias
+                  type: Varchar(256)
+              - column:
+                  name: twitter_alias
+                  type: Varchar(256)
+              - column:
+                  name: linkedin_alias
+                  type: Varchar(256)
+  - changeSet:
+      id: "add column projectId to Teams table"
+      author: azag
+      changes:
+        - addColumn:
+            schemaName: innometricsauth
+            tableName: teams
+            columns:
+              - column:
+                  name: projectid
+                  type: Integer
+                  constraints:
+                    references: innometricsauth.project(projectid)
+                    foreignKeyName: fk_projectid
+                    nullable: false
+
+  - changeSet:
+      id: "add Unique Constraint to teammembers table"
+      author: azag
+      changes:
+        - addUniqueConstraint:
+            schemaName: innometricsauth
+            tableName: teammembers
+            columnNames: teamid, email
+            constraintName: "unique_teammember"
+
+  - changeSet:
+      id: "Creating table to manage reset passwords"
+      author: azag
+      changes:
+        - createTable:
+            schemaName: innometricsauth
+            tableName: temporal_token
+            remarks: Table to store temporal_tokens
+            columns:
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: email_pk
+              - column:
+                  name: temporal_token
+                  type: Varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expiration_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+

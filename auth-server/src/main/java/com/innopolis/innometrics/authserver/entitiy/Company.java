@@ -14,28 +14,20 @@ import java.util.Date;
 @Entity
 @Table
 public class Company implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(updatable = false)
-    private Integer companyid;
-
-    @Column
-    private String companyname;
-
-    @Column
-    private String isactive;
-
+    @Column(updatable = false, name = "companyid")
+    private Integer companyId;
+    @Column(name = "companyname")
+    private String companyName;
+    @Column(name = "isactive")
+    private String isActive;
     @Column(name = "creationdate", insertable = false, updatable = false)
-    private Date creationdate;
-
-    @Column(name = "createdby", insertable = false, updatable = false)
-    private String createdby;
-
+    private Date creationDate;
+    @Column(name = "createdby", updatable = false)
+    private String createdBy;
     @Column(name = "lastupdate", insertable = false)
-    private Date lastupdate;
-
+    private Date lastUpdate;
     @Column(name = "updateby", insertable = false)
-    private String updateby;
-
+    private String updateBy;
 }

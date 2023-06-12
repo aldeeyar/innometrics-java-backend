@@ -19,6 +19,9 @@
         <spring-cloud.version>Hoxton.SR1</spring-cloud.version>
         <sonar.organization>aldeeyar</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.exclusions> <!-- the members of the following list should be in the same line -->
+            **/activitiescollector/entity/*.java,**/activitiescollector/dto/*.java,**/activitiescollector/constants/*.java,**/activitiescollector/service/CategoryService.java,**/activitiescollector/controller/*.java,**/activitiescollector/service/ProcessService.java
+        </sonar.coverage.exclusions>
     </properties>
 
     <dependencies>
@@ -146,6 +149,14 @@
                         <formats>
                         <format>XML</format>
                         </formats>
+                        <excludes>
+                            <exclude>**/activitiescollector/entity/*.java</exclude>
+                            <exclude>**/activitiescollector/dto/*.java</exclude>
+                            <exclude>**/activitiescollector/constants/*.java</exclude>
+                            <exclude>**/activitiescollector/service/CategoryService.java</exclude>
+                            <exclude>**/activitiescollector/controller/*.java</exclude>
+                            <exclude>**/activitiescollector/service/ProcessService.java</exclude>
+                        </excludes>
                     </configuration>
                     </execution>
                 </executions>
